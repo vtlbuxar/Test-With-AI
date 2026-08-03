@@ -93,7 +93,7 @@ export default function SignupPage() {
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
-    defaultValues: { role: 'User', terms: false },
+    defaultValues: { role: 'Analyst', terms: false },
   });
 
   const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -214,7 +214,6 @@ export default function SignupPage() {
             disabled={isLoading}
             className={inputClass(!!errors.role)}
           >
-            <option value="User">User</option>
             <option value="Analyst">Analyst</option>
           </select>
           {errors.role && <p className="mt-1.5 text-xs text-red-600">{errors.role.message}</p>}
