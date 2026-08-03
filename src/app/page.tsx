@@ -135,17 +135,6 @@ export default function TestAnalystPage() {
     }
   }, [user, router]);
 
-  // Loading guard or immediate redirect to avoid UI flashing
-  if (loading || (user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN'))) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-zinc-950 text-zinc-100">
-        <div className="flex flex-col items-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-teal-500" />
-          <p className="text-sm text-zinc-400 font-medium">Routing to workspace...</p>
-        </div>
-      </div>
-    );
-  }
 
   // AI Settings State
   const [showSettings, setShowSettings] = useState(false);
@@ -843,6 +832,18 @@ export default function TestAnalystPage() {
   const isGenerating = loadingAnalysis || loadingScenarios || loadingTestCases || loadingRTM || loadingSuites || loadingDefects || loadingTestData || loadingDiff;
 
   const isInputValid = inputMethod === "TEXT" ? requirement.trim().length > 0 : file !== null;
+
+  // Loading guard or immediate redirect to avoid UI flashing (safely placed after all hook declarations)
+  if (loading || (user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN'))) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-zinc-950 text-zinc-100">
+        <div className="flex flex-col items-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-teal-500" />
+          <p className="text-sm text-zinc-400 font-medium">Routing to workspace...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-6 max-w-7xl space-y-8">
