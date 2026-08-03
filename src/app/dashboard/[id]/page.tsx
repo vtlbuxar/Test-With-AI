@@ -57,6 +57,13 @@ export default function ProjectDetailsPage() {
         </div>
         <div className="flex items-center gap-3">
           <AIUsageCenter />
+          {(user?.role === 'Analyst' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
+            <Link href="/admin">
+              <Button variant="outline" className="border-teal-300 text-teal-700 bg-teal-50 hover:bg-teal-100 hover:text-teal-800 font-medium">
+                Admin Panel
+              </Button>
+            </Link>
+          )}
           {user && (
             <div className="flex items-center gap-2 border rounded-lg px-3 py-1.5 bg-muted/40">
               <Link href="/profile" className="flex items-center gap-2 group hover:opacity-80 transition-opacity">
