@@ -20,12 +20,19 @@ export async function GET() {
         email: true,
         role: true,
         phoneNumber: true,
+        status: true,
         createdAt: true,
       }
     });
 
     if (!user) {
       const response = NextResponse.json({ error: 'User not found' }, { status: 404 });
+      response.cookies.delete('auth_token');
+      return response;
+    }
+
+    if (user.status === 'SUSPENDED') {
+      const response = NextResponse.json({ error: 'Account suspended' }, { status: 403 });
       response.cookies.delete('auth_token');
       return response;
     }

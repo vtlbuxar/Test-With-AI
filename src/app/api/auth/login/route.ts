@@ -32,6 +32,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
+    if (user.status === 'SUSPENDED') {
+      return NextResponse.json({ error: 'Your account has been suspended by an administrator.' }, { status: 403 });
+    }
+
     if (!user.isVerified) {
       return NextResponse.json({ error: 'Please verify your email before logging in.' }, { status: 403 });
     }
