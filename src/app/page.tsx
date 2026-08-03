@@ -12,6 +12,7 @@ import { Loader2, UploadCloud, FileText, X, CheckCircle, AlertTriangle, Star, Do
 import * as xlsx from "xlsx";
 import { storage, Project } from "@/lib/storage";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import { useAuth } from "@/lib/use-auth";
 import { AIUsageCenter } from "@/components/dashboard/ai-usage-center";
 
@@ -125,6 +126,15 @@ const sanitizeHeaderValue = (val?: string | null): string => {
 
 export default function TestAnalystPage() {
   const { user, logout } = useAuth();
+  const router = useRouter();
+
+  // Redirect admin users to the admin dashboard directly
+  useEffect(() => {
+    if (user && (user.role === 'Analyst' || user.role === 'ADMIN' || user.role === 'SUPER_ADMIN')) {
+      router.push('/admin');
+    }
+  }, [user, router]);
+
   // AI Settings State
   const [showSettings, setShowSettings] = useState(false);
   const [quotaExceeded, setQuotaExceeded] = useState(false);
