@@ -130,7 +130,7 @@ export default function TestAnalystPage() {
 
   // Redirect admin users to the admin dashboard directly
   useEffect(() => {
-    if (user && (user.role === 'Analyst' || user.role === 'ADMIN' || user.role === 'SUPER_ADMIN')) {
+    if (user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN')) {
       router.push('/admin');
     }
   }, [user, router]);
@@ -850,7 +850,7 @@ export default function TestAnalystPage() {
               View Dashboard
             </Button>
           </Link>
-          {(user?.role === 'Analyst' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
+          {(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
             <Link href="/admin">
               <Button variant="outline" className="border-teal-300 text-teal-700 bg-teal-50 hover:bg-teal-100 hover:text-teal-800 font-medium">
                 Admin Panel

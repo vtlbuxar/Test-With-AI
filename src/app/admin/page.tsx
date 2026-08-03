@@ -92,7 +92,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!authLoading) {
-      if (!user || (user.role !== 'Analyst' && user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN')) {
+      if (!user || (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN')) {
         // Redirect standard users to normal dashboard
         router.push('/dashboard');
       } else {
