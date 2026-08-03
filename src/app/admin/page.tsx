@@ -574,14 +574,24 @@ export default function AdminDashboard() {
                               {/* Suspend / Unsuspend */}
                               <button
                                 onClick={() => toggleUserStatus(usr.id, usr.status)}
-                                title={usr.status === 'ACTIVE' ? 'Suspend User Account' : 'Activate User Account'}
+                                title={
+                                  usr.status === 'ACTIVE' 
+                                    ? 'Suspend User Account' 
+                                    : usr.status === 'PENDING_VERIFICATION'
+                                    ? 'Verify & Activate User Account'
+                                    : 'Activate User Account'
+                                }
                                 className={`p-1.5 rounded border transition-colors ${
                                   usr.status === 'ACTIVE'
                                     ? 'bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-red-400 border-zinc-800'
                                     : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-green-400 border-zinc-800'
                                 }`}
                               >
-                                <Ban className="h-3.5 w-3.5" />
+                                {usr.status === 'PENDING_VERIFICATION' ? (
+                                  <CheckCircle className="h-3.5 w-3.5" />
+                                ) : (
+                                  <Ban className="h-3.5 w-3.5" />
+                                )}
                               </button>
                               {/* Permanent Delete */}
                               <button

@@ -75,7 +75,12 @@ export async function PATCH(req: NextRequest) {
 
     const updateData: any = {};
     if (role !== undefined) updateData.role = role;
-    if (status !== undefined) updateData.status = status;
+    if (status !== undefined) {
+      updateData.status = status;
+      if (status === 'ACTIVE') {
+        updateData.isVerified = true;
+      }
+    }
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
