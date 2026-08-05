@@ -57,6 +57,11 @@ export default function ProjectDetailsPage() {
         </div>
         <div className="flex items-center gap-3">
           <AIUsageCenter />
+          <Link href="/dashboard/execution">
+            <Button variant="outline" className="border-slate-300 text-slate-700 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 font-semibold flex items-center gap-1.5">
+              <span>Execute Test Cases ⭐</span>
+            </Button>
+          </Link>
           {(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
             <Link href="/admin">
               <Button variant="outline" className="border-teal-300 text-teal-700 bg-teal-50 hover:bg-teal-100 hover:text-teal-800 font-medium">

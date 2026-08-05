@@ -1,0 +1,338 @@
+[System] Enqueued test run ffee45b6-4ac7-4001-8646-78c9457e7a37
+[7:42:41 pm] [System] Job queued. Position in queue: 1
+[7:42:42 pm] [System] Worker picked up job. Starting execution...
+[7:42:43 pm] Launching browser chromium in headless mode...
+[7:42:46 pm] ======================================
+[7:42:46 pm] 🚀 Starting Test Case: TC_LOGIN_001 - Verify successful login with valid credentials
+[7:42:54 pm] Navigated to target URL: https://www.saucedemo.com/
+[7:42:54 pm] --------------------------------------
+[7:42:54 pm] Running Step 1: Navigate to login page
+[7:42:54 pm] Executing 1 sub-actions for step...
+[7:42:54 pm] Sub-action 1: [navigate] matching target "https://www.saucedemo.com/" with value ""
+[7:42:56 pm] Applying Deterministic Rule Engine...
+[7:42:56 pm] Rule Engine Decision: [PASS]
+[7:42:56 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://www.saucedemo.com/
+[7:42:56 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_001-step-1.png
+[7:42:56 pm] --------------------------------------
+[7:42:56 pm] Running Step 2: Enter valid username
+[7:42:56 pm] Executing 1 sub-actions for step...
+[7:42:56 pm] Sub-action 1: [fill] matching target "Enter valid username" with value "standard_user"
+[7:42:58 pm] Applying Deterministic Rule Engine...
+[7:42:58 pm] Rule Engine Decision: [PASS]
+[7:42:58 pm] Rule Engine Reasoning: Verified element user-name was filled with value: "standard_user"
+[7:42:58 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_001-step-2.png
+[7:42:58 pm] --------------------------------------
+[7:42:58 pm] Running Step 3: Enter valid password
+[7:42:58 pm] Executing 1 sub-actions for step...
+[7:42:58 pm] Sub-action 1: [fill] matching target "Enter valid password" with value "secret_sauce"
+[7:42:59 pm] Applying Deterministic Rule Engine...
+[7:42:59 pm] Rule Engine Decision: [PASS]
+[7:42:59 pm] Rule Engine Reasoning: Verified element password was filled with value: "secret_sauce"
+[7:42:59 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_001-step-3.png
+[7:42:59 pm] --------------------------------------
+[7:42:59 pm] Running Step 4: Click 'Login' button
+[7:42:59 pm] Executing 1 sub-actions for step...
+[7:42:59 pm] Sub-action 1: [click] matching target "Click 'Login' button" with value ""
+[7:43:01 pm] Applying Deterministic Rule Engine...
+[7:43:01 pm] Rule Engine Decision: [PASS]
+[7:43:01 pm] Rule Engine Reasoning: Authentication Success: Redirected to https://www.saucedemo.com/inventory.html. Verified products catalog, logout controls, and active cookies [session-username].
+[7:43:01 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_001-step-4.png
+[7:43:01 pm] Finished Test Case. Status: [PASSED]
+[7:43:01 pm] ======================================
+[7:43:01 pm] 🚀 Starting Test Case: TC_LOGIN_002 - Verify login failure with invalid username
+[7:43:01 pm] Navigated to target URL: https://www.saucedemo.com/
+[7:43:01 pm] --------------------------------------
+[7:43:01 pm] Running Step 1: Navigate to login page
+[7:43:01 pm] Executing 1 sub-actions for step...
+[7:43:01 pm] Sub-action 1: [navigate] matching target "https://www.saucedemo.com/" with value ""
+[7:43:02 pm] Applying Deterministic Rule Engine...
+[7:43:02 pm] Rule Engine Decision: [PASS]
+[7:43:02 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://www.saucedemo.com/
+[7:43:02 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_002-step-1.png
+[7:43:02 pm] --------------------------------------
+[7:43:02 pm] Running Step 2: Enter invalid username
+[7:43:03 pm] Executing 1 sub-actions for step...
+[7:43:03 pm] Sub-action 1: [fill] matching target "Enter invalid username" with value "invalid_user_exceeding_chars"
+[7:43:04 pm] Applying Deterministic Rule Engine...
+[7:43:04 pm] Rule Engine Decision: [PASS]
+[7:43:04 pm] Rule Engine Reasoning: Verified element user-name was filled with value: "invalid_user_exceeding_chars"
+[7:43:04 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_002-step-2.png
+[7:43:04 pm] --------------------------------------
+[7:43:04 pm] Running Step 3: Enter valid password
+[7:43:04 pm] Executing 1 sub-actions for step...
+[7:43:04 pm] Sub-action 1: [fill] matching target "Enter valid password" with value "secret_sauce"
+[7:43:05 pm] Applying Deterministic Rule Engine...
+[7:43:05 pm] Rule Engine Decision: [PASS]
+[7:43:05 pm] Rule Engine Reasoning: Verified element password was filled with value: "secret_sauce"
+[7:43:05 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_002-step-3.png
+[7:43:05 pm] --------------------------------------
+[7:43:05 pm] Running Step 4: Click 'Login' button
+[7:43:05 pm] Executing 1 sub-actions for step...
+[7:43:05 pm] Sub-action 1: [click] matching target "Click 'Login' button" with value ""
+[7:43:06 pm] Applying Deterministic Rule Engine...
+[7:43:06 pm] Rule Engine Decision: [PASS]
+[7:43:06 pm] Rule Engine Reasoning: Authentication Blocked: Expected validation error displayed correctly on screen.
+[7:43:06 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_002-step-4.png
+[7:43:06 pm] Finished Test Case. Status: [PASSED]
+[7:43:06 pm] ======================================
+[7:43:06 pm] 🚀 Starting Test Case: TC_LOGIN_003 - Verify login failure with invalid password
+[7:43:07 pm] Navigated to target URL: https://www.saucedemo.com/
+[7:43:07 pm] --------------------------------------
+[7:43:07 pm] Running Step 1: Navigate to login page
+[7:43:07 pm] Executing 1 sub-actions for step...
+[7:43:07 pm] Sub-action 1: [navigate] matching target "https://www.saucedemo.com/" with value ""
+[7:43:08 pm] Applying Deterministic Rule Engine...
+[7:43:08 pm] Rule Engine Decision: [PASS]
+[7:43:08 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://www.saucedemo.com/
+[7:43:08 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_003-step-1.png
+[7:43:08 pm] --------------------------------------
+[7:43:08 pm] Running Step 2: Enter valid username
+[7:43:08 pm] Executing 1 sub-actions for step...
+[7:43:08 pm] Sub-action 1: [fill] matching target "Enter valid username" with value "standard_user"
+[7:43:09 pm] Applying Deterministic Rule Engine...
+[7:43:09 pm] Rule Engine Decision: [PASS]
+[7:43:09 pm] Rule Engine Reasoning: Verified element user-name was filled with value: "standard_user"
+[7:43:09 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_003-step-2.png
+[7:43:09 pm] --------------------------------------
+[7:43:09 pm] Running Step 3: Enter invalid password
+[7:43:09 pm] Executing 1 sub-actions for step...
+[7:43:09 pm] Sub-action 1: [fill] matching target "Enter invalid password" with value "invalid_password"
+[7:43:10 pm] Applying Deterministic Rule Engine...
+[7:43:10 pm] Rule Engine Decision: [PASS]
+[7:43:10 pm] Rule Engine Reasoning: Verified element password was filled with value: "invalid_password"
+[7:43:10 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_003-step-3.png
+[7:43:10 pm] --------------------------------------
+[7:43:10 pm] Running Step 4: Click 'Login' button
+[7:43:10 pm] Executing 1 sub-actions for step...
+[7:43:10 pm] Sub-action 1: [click] matching target "Click 'Login' button" with value ""
+[7:43:11 pm] Applying Deterministic Rule Engine...
+[7:43:11 pm] Rule Engine Decision: [PASS]
+[7:43:11 pm] Rule Engine Reasoning: Authentication Blocked: Expected validation error displayed correctly on screen.
+[7:43:12 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_003-step-4.png
+[7:43:12 pm] Finished Test Case. Status: [PASSED]
+[7:43:12 pm] ======================================
+[7:43:12 pm] 🚀 Starting Test Case: TC_LOGIN_004 - Verify login failure with empty username and password
+[7:43:12 pm] Navigated to target URL: https://www.saucedemo.com/
+[7:43:12 pm] --------------------------------------
+[7:43:12 pm] Running Step 1: Navigate to login page
+[7:43:12 pm] Executing 1 sub-actions for step...
+[7:43:12 pm] Sub-action 1: [navigate] matching target "https://www.saucedemo.com/" with value ""
+[7:43:13 pm] Applying Deterministic Rule Engine...
+[7:43:13 pm] Rule Engine Decision: [PASS]
+[7:43:13 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://www.saucedemo.com/
+[7:43:13 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_004-step-1.png
+[7:43:13 pm] --------------------------------------
+[7:43:13 pm] Running Step 2: Leave username blank
+[7:43:13 pm] Executing 1 sub-actions for step...
+[7:43:13 pm] Sub-action 1: [fill] matching target "Leave username blank" with value ""
+[7:43:14 pm] Applying Deterministic Rule Engine...
+[7:43:14 pm] Rule Engine Decision: [PASS]
+[7:43:14 pm] Rule Engine Reasoning: Verified element user-name was filled with value: ""
+[7:43:14 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_004-step-2.png
+[7:43:14 pm] --------------------------------------
+[7:43:14 pm] Running Step 3: Leave password blank
+[7:43:14 pm] Executing 1 sub-actions for step...
+[7:43:14 pm] Sub-action 1: [fill] matching target "Leave password blank" with value ""
+[7:43:15 pm] Applying Deterministic Rule Engine...
+[7:43:15 pm] Rule Engine Decision: [PASS]
+[7:43:15 pm] Rule Engine Reasoning: Verified element password was filled with value: ""
+[7:43:15 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_004-step-3.png
+[7:43:15 pm] --------------------------------------
+[7:43:15 pm] Running Step 4: Click 'Login' button
+[7:43:15 pm] Executing 1 sub-actions for step...
+[7:43:15 pm] Sub-action 1: [click] matching target "Click 'Login' button" with value ""
+[7:43:17 pm] Applying Deterministic Rule Engine...
+[7:43:17 pm] Rule Engine Decision: [PASS]
+[7:43:17 pm] Rule Engine Reasoning: Authentication Blocked: Expected validation error displayed correctly on screen.
+[7:43:17 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_004-step-4.png
+[7:43:17 pm] Finished Test Case. Status: [PASSED]
+[7:43:17 pm] ======================================
+[7:43:17 pm] 🚀 Starting Test Case: TC_LOGIN_005 - Verify login with maximum allowed characters in username and password fields
+[7:43:17 pm] Navigated to target URL: https://www.saucedemo.com/
+[7:43:17 pm] --------------------------------------
+[7:43:17 pm] Running Step 1: Navigate to login page
+[7:43:17 pm] Executing 1 sub-actions for step...
+[7:43:17 pm] Sub-action 1: [navigate] matching target "https://www.saucedemo.com/" with value ""
+[7:43:18 pm] Applying Deterministic Rule Engine...
+[7:43:18 pm] Rule Engine Decision: [PASS]
+[7:43:18 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://www.saucedemo.com/
+[7:43:18 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_005-step-1.png
+[7:43:18 pm] --------------------------------------
+[7:43:18 pm] Running Step 2: Enter username with maximum allowed characters
+[7:43:18 pm] Executing 1 sub-actions for step...
+[7:43:18 pm] Sub-action 1: [fill] matching target "Enter username with maximum allowed characters" with value "standard_user_long_character_string_that_exceeds_sixty_characters_limit"
+[7:43:19 pm] Applying Deterministic Rule Engine...
+[7:43:19 pm] Rule Engine Decision: [PASS]
+[7:43:19 pm] Rule Engine Reasoning: Verified element user-name was filled with value: "standard_user_long_character_string_that_exceeds_sixty_characters_limit"
+[7:43:19 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_005-step-2.png
+[7:43:19 pm] --------------------------------------
+[7:43:19 pm] Running Step 3: Enter password with maximum allowed characters
+[7:43:19 pm] Executing 1 sub-actions for step...
+[7:43:19 pm] Sub-action 1: [fill] matching target "Enter password with maximum allowed characters" with value "standard_user_long_character_string_that_exceeds_sixty_characters_limit"
+[7:43:20 pm] Applying Deterministic Rule Engine...
+[7:43:20 pm] Rule Engine Decision: [PASS]
+[7:43:20 pm] Rule Engine Reasoning: Verified element password was filled with value: "standard_user_long_character_string_that_exceeds_sixty_characters_limit"
+[7:43:20 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_005-step-3.png
+[7:43:20 pm] --------------------------------------
+[7:43:20 pm] Running Step 4: Click 'Login' button
+[7:43:20 pm] Executing 1 sub-actions for step...
+[7:43:20 pm] Sub-action 1: [click] matching target "Click 'Login' button" with value ""
+[7:43:22 pm] Applying Deterministic Rule Engine...
+[7:43:22 pm] Rule Engine Decision: [FAIL]
+[7:43:22 pm] Rule Engine Reasoning: Authentication Failed: Redirection did not occur. Error message detected on login screen.
+[7:43:22 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_005-step-4.png
+[7:43:22 pm] Finished Test Case. Status: [FAILED]
+[7:43:22 pm] ======================================
+[7:43:22 pm] 🚀 Starting Test Case: TC_LOGIN_006 - Verify login with minimum allowed characters in username and password fields
+[7:43:22 pm] Navigated to target URL: https://www.saucedemo.com/
+[7:43:22 pm] --------------------------------------
+[7:43:22 pm] Running Step 1: Navigate to login page
+[7:43:22 pm] Executing 1 sub-actions for step...
+[7:43:22 pm] Sub-action 1: [navigate] matching target "https://www.saucedemo.com/" with value ""
+[7:43:23 pm] Applying Deterministic Rule Engine...
+[7:43:23 pm] Rule Engine Decision: [PASS]
+[7:43:23 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://www.saucedemo.com/
+[7:43:23 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_006-step-1.png
+[7:43:23 pm] --------------------------------------
+[7:43:23 pm] Running Step 2: Enter username with minimum allowed characters
+[7:43:23 pm] Executing 1 sub-actions for step...
+[7:43:23 pm] Sub-action 1: [fill] matching target "Enter username with minimum allowed characters" with value "s"
+[7:43:24 pm] Applying Deterministic Rule Engine...
+[7:43:24 pm] Rule Engine Decision: [PASS]
+[7:43:24 pm] Rule Engine Reasoning: Verified element user-name was filled with value: "s"
+[7:43:24 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_006-step-2.png
+[7:43:24 pm] --------------------------------------
+[7:43:24 pm] Running Step 3: Enter password with minimum allowed characters
+[7:43:24 pm] Executing 1 sub-actions for step...
+[7:43:24 pm] Sub-action 1: [fill] matching target "Enter password with minimum allowed characters" with value "s"
+[7:43:26 pm] Applying Deterministic Rule Engine...
+[7:43:26 pm] Rule Engine Decision: [PASS]
+[7:43:26 pm] Rule Engine Reasoning: Verified element password was filled with value: "s"
+[7:43:26 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_006-step-3.png
+[7:43:26 pm] --------------------------------------
+[7:43:26 pm] Running Step 4: Click 'Login' button
+[7:43:26 pm] Executing 1 sub-actions for step...
+[7:43:26 pm] Sub-action 1: [click] matching target "Click 'Login' button" with value ""
+[7:43:27 pm] Applying Deterministic Rule Engine...
+[7:43:27 pm] Rule Engine Decision: [FAIL]
+[7:43:27 pm] Rule Engine Reasoning: Authentication Failed: Redirection did not occur. Error message detected on login screen.
+[7:43:27 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_006-step-4.png
+[7:43:27 pm] Finished Test Case. Status: [FAILED]
+[7:43:27 pm] ======================================
+[7:43:27 pm] 🚀 Starting Test Case: TC_LOGIN_007 - Verify login failure with SQL injection in username field
+[7:43:27 pm] Navigated to target URL: https://www.saucedemo.com/
+[7:43:27 pm] --------------------------------------
+[7:43:27 pm] Running Step 1: Navigate to login page
+[7:43:27 pm] Executing 1 sub-actions for step...
+[7:43:27 pm] Sub-action 1: [navigate] matching target "https://www.saucedemo.com/" with value ""
+[7:43:28 pm] Applying Deterministic Rule Engine...
+[7:43:28 pm] Rule Engine Decision: [PASS]
+[7:43:28 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://www.saucedemo.com/
+[7:43:28 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_007-step-1.png
+[7:43:28 pm] --------------------------------------
+[7:43:28 pm] Running Step 2: Enter SQL injection payload in username field
+[7:43:28 pm] Executing 1 sub-actions for step...
+[7:43:28 pm] Sub-action 1: [fill] matching target "Enter SQL injection payload in username field" with value "' OR '1'='1"
+[7:43:29 pm] Applying Deterministic Rule Engine...
+[7:43:29 pm] Rule Engine Decision: [PASS]
+[7:43:29 pm] Rule Engine Reasoning: Verified element user-name was filled with value: "' OR '1'='1"
+[7:43:29 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_007-step-2.png
+[7:43:29 pm] --------------------------------------
+[7:43:29 pm] Running Step 3: Enter any password
+[7:43:29 pm] Executing 1 sub-actions for step...
+[7:43:29 pm] Sub-action 1: [fill] matching target "Enter any password" with value "secret_sauce"
+[7:43:30 pm] Applying Deterministic Rule Engine...
+[7:43:30 pm] Rule Engine Decision: [PASS]
+[7:43:30 pm] Rule Engine Reasoning: Verified element password was filled with value: "secret_sauce"
+[7:43:31 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_007-step-3.png
+[7:43:31 pm] --------------------------------------
+[7:43:31 pm] Running Step 4: Click 'Login' button
+[7:43:31 pm] Executing 1 sub-actions for step...
+[7:43:31 pm] Sub-action 1: [click] matching target "Click 'Login' button" with value ""
+[7:43:32 pm] Applying Deterministic Rule Engine...
+[7:43:32 pm] Rule Engine Decision: [PASS]
+[7:43:32 pm] Rule Engine Reasoning: Authentication Blocked: Expected validation error displayed correctly on screen.
+[7:43:32 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_007-step-4.png
+[7:43:32 pm] Finished Test Case. Status: [PASSED]
+[7:43:32 pm] ======================================
+[7:43:32 pm] 🚀 Starting Test Case: TC_LOGIN_008 - Verify login failure with XSS payload in username field
+[7:43:32 pm] Navigated to target URL: https://www.saucedemo.com/
+[7:43:32 pm] --------------------------------------
+[7:43:32 pm] Running Step 1: Navigate to login page
+[7:43:32 pm] Executing 1 sub-actions for step...
+[7:43:32 pm] Sub-action 1: [navigate] matching target "https://www.saucedemo.com/" with value ""
+[7:43:33 pm] Applying Deterministic Rule Engine...
+[7:43:33 pm] Rule Engine Decision: [PASS]
+[7:43:33 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://www.saucedemo.com/
+[7:43:33 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_008-step-1.png
+[7:43:33 pm] --------------------------------------
+[7:43:33 pm] Running Step 2: Enter XSS payload in username field
+[7:43:33 pm] Executing 1 sub-actions for step...
+[7:43:33 pm] Sub-action 1: [fill] matching target "Enter XSS payload in username field" with value "<script>alert('xss')</script>"
+[7:43:34 pm] Applying Deterministic Rule Engine...
+[7:43:34 pm] Rule Engine Decision: [PASS]
+[7:43:34 pm] Rule Engine Reasoning: Verified element user-name was filled with value: "<script>alert('xss')</script>"
+[7:43:34 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_008-step-2.png
+[7:43:34 pm] --------------------------------------
+[7:43:34 pm] Running Step 3: Enter any password
+[7:43:34 pm] Executing 1 sub-actions for step...
+[7:43:34 pm] Sub-action 1: [fill] matching target "Enter any password" with value "secret_sauce"
+[7:43:36 pm] Applying Deterministic Rule Engine...
+[7:43:36 pm] Rule Engine Decision: [PASS]
+[7:43:36 pm] Rule Engine Reasoning: Verified element password was filled with value: "secret_sauce"
+[7:43:36 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_008-step-3.png
+[7:43:36 pm] --------------------------------------
+[7:43:36 pm] Running Step 4: Click 'Login' button
+[7:43:36 pm] Executing 1 sub-actions for step...
+[7:43:36 pm] Sub-action 1: [click] matching target "Click 'Login' button" with value ""
+[7:43:37 pm] Applying Deterministic Rule Engine...
+[7:43:37 pm] Rule Engine Decision: [PASS]
+[7:43:37 pm] Rule Engine Reasoning: Authentication Blocked: Expected validation error displayed correctly on screen.
+[7:43:37 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_008-step-4.png
+[7:43:37 pm] Finished Test Case. Status: [PASSED]
+[7:43:37 pm] ======================================
+[7:43:37 pm] 🚀 Starting Test Case: TC_LOGIN_009 - Verify login page accessibility via keyboard navigation (Tab key)
+[7:43:37 pm] Navigated to target URL: https://www.saucedemo.com/
+[7:43:37 pm] --------------------------------------
+[7:43:37 pm] Running Step 1: Navigate to login page
+[7:43:37 pm] Executing 1 sub-actions for step...
+[7:43:37 pm] Sub-action 1: [navigate] matching target "https://www.saucedemo.com/" with value ""
+[7:43:38 pm] Applying Deterministic Rule Engine...
+[7:43:38 pm] Rule Engine Decision: [PASS]
+[7:43:38 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://www.saucedemo.com/
+[7:43:38 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_009-step-1.png
+[7:43:38 pm] --------------------------------------
+[7:43:38 pm] Running Step 2: Use Tab key to navigate through username, password fields, and login button
+[7:43:38 pm] Executing 1 sub-actions for step...
+[7:43:38 pm] Sub-action 1: [navigate] matching target "https://www.saucedemo.com/" with value ""
+[7:43:40 pm] Applying Deterministic Rule Engine...
+[7:43:40 pm] Rule Engine Decision: [PASS]
+[7:43:40 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://www.saucedemo.com/
+[7:43:40 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_009-step-2.png
+[7:43:40 pm] --------------------------------------
+[7:43:40 pm] Running Step 3: Enter valid credentials
+[7:43:40 pm] Executing 1 sub-actions for step...
+[7:43:40 pm] Sub-action 1: [fill] matching target "Enter valid credentials" with value "standard_user"
+[7:43:40 pm] [Error] Action Execution Failed: Action failed after 1 attempts. Error: Could not locate element matching semantic targets in action text: "Enter valid credentials"
+[7:43:40 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_009-step-3.png
+[7:43:40 pm] Finished Test Case. Status: [FAILED]
+[7:43:40 pm] ======================================
+[7:43:40 pm] 🚀 Starting Test Case: TC_LOGIN_010 - Verify login form responsiveness on different screen sizes
+[7:43:40 pm] Navigated to target URL: https://www.saucedemo.com/
+[7:43:40 pm] --------------------------------------
+[7:43:40 pm] Running Step 1: Open login page on different devices/screen sizes
+[7:43:40 pm] Executing 1 sub-actions for step...
+[7:43:40 pm] Sub-action 1: [navigate] matching target "https://www.saucedemo.com/" with value ""
+[7:43:42 pm] Applying Deterministic Rule Engine...
+[7:43:42 pm] Rule Engine Decision: [PASS]
+[7:43:42 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://www.saucedemo.com/
+[7:43:42 pm] Screenshot saved to disk: ffee45b6-4ac7-4001-8646-78c9457e7a37-TC_LOGIN_010-step-1.png
+[7:43:42 pm] --------------------------------------
+[7:43:42 pm] Running Step 2: Observe the layout and functionality
+[7:43:42 pm] Executing 1 sub-actions for step...
+[7:43:42 pm] Sub-action 1: [observe] matching target "Observe the layout and functionality" with value ""
+[7:43:43 pm] Applying Deterministic Rule Engine...
+[7:43:43 pm] Rule Engine returned UNKNOWN. Invoking Stage 1 Text AI validation...
+[7:43:51 pm] AI Decision: [FAILED] | Confidence: 0.85
+[7:43:51 pm] Finished Test Case. Status: [FAILED]
+[7:43:51 pm] Trace file saved: ffee45b6-4ac7-4001-8646-78c9457e7a37-trace.zip

@@ -67,6 +67,11 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-3">
           <AIUsageCenter />
+          <Link href="/dashboard/execution">
+            <Button variant="outline" className="border-slate-300 text-slate-700 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 font-semibold flex items-center gap-1.5">
+              <span>Execute Test Cases ⭐</span>
+            </Button>
+          </Link>
           <Link href="/">
             <Button variant="outline">
               + New Analysis

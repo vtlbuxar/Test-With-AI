@@ -1,0 +1,208 @@
+[System] Enqueued test run 3916ea52-405a-426e-acb9-2e676154ecb8
+[8:30:20 pm] [System] Job queued. Position in queue: 1
+[8:30:20 pm] [System] Worker picked up job. Starting execution...
+[8:30:21 pm] Launching browser chromium in headless mode...
+[8:30:22 pm] ======================================
+[8:30:22 pm] 🚀 Starting Test Case: TC_FS_001 - Search flights with valid departure and destination cities
+[8:30:31 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:31 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:32 pm] Navigated to target URL: https://blazedemo.com/
+[8:30:32 pm] --------------------------------------
+[8:30:32 pm] Running Step 1: Navigate to flight search page. 2. Enter valid departure city. 3. Enter valid destination city (different from departure). 4. Click ‘Search’.
+[8:30:32 pm] Executing 4 sub-actions for step...
+[8:30:32 pm] Sub-action 1: [navigate] matching target "https://blazedemo.com/" with value ""
+[8:30:33 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:33 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:34 pm] Sub-action 2: [fill] matching target "Enter valid departure city." with value "New York"
+[8:30:34 pm] [Error] LOCATOR_FAILURE: Action failed after 1 attempts. Error: Could not locate element matching semantic targets in action text: "Enter valid departure city."
+[8:30:34 pm] Screenshot saved to disk: 3916ea52-405a-426e-acb9-2e676154ecb8-TC_FS_001-step-1.png
+[8:30:34 pm] Finished Test Case. Status: [FAILED]
+[8:30:34 pm] ======================================
+[8:30:34 pm] 🚀 Starting Test Case: TC_FS_002 - Search flights with invalid route (same departure and destination cities)
+[8:30:35 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:35 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:35 pm] Navigated to target URL: https://blazedemo.com/
+[8:30:35 pm] --------------------------------------
+[8:30:35 pm] Running Step 1: Navigate to flight search page. 2. Enter valid departure city. 3. Enter same city as destination. 4. Click ‘Search’.
+[8:30:35 pm] Executing 4 sub-actions for step...
+[8:30:35 pm] Sub-action 1: [navigate] matching target "https://blazedemo.com/" with value ""
+[8:30:35 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:35 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:36 pm] Sub-action 2: [fill] matching target "Enter valid departure city." with value "New York"
+[8:30:37 pm] [Error] LOCATOR_FAILURE: Action failed after 1 attempts. Error: Could not locate element matching semantic targets in action text: "Enter valid departure city."
+[8:30:37 pm] Screenshot saved to disk: 3916ea52-405a-426e-acb9-2e676154ecb8-TC_FS_002-step-1.png
+[8:30:37 pm] Finished Test Case. Status: [FAILED]
+[8:30:37 pm] ======================================
+[8:30:37 pm] 🚀 Starting Test Case: TC_FS_003 - Search flights with empty departure city
+[8:30:37 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:37 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:37 pm] Navigated to target URL: https://blazedemo.com/
+[8:30:37 pm] --------------------------------------
+[8:30:37 pm] Running Step 1: Navigate to flight search page. 2. Leave departure city empty. 3. Enter valid destination city. 4. Click ‘Search’.
+[8:30:37 pm] Executing 4 sub-actions for step...
+[8:30:37 pm] Sub-action 1: [navigate] matching target "https://blazedemo.com/" with value ""
+[8:30:38 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:38 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:39 pm] Sub-action 2: [fill] matching target "Leave departure city empty." with value ""
+[8:30:39 pm] [Error] LOCATOR_FAILURE: Action failed after 1 attempts. Error: Could not locate element matching semantic targets in action text: "Leave departure city empty."
+[8:30:39 pm] Screenshot saved to disk: 3916ea52-405a-426e-acb9-2e676154ecb8-TC_FS_003-step-1.png
+[8:30:39 pm] Finished Test Case. Status: [FAILED]
+[8:30:39 pm] ======================================
+[8:30:39 pm] 🚀 Starting Test Case: TC_FS_004 - Search flights with empty destination city
+[8:30:40 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:40 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:40 pm] Navigated to target URL: https://blazedemo.com/
+[8:30:40 pm] --------------------------------------
+[8:30:40 pm] Running Step 1: Navigate to flight search page. 2. Enter valid departure city. 3. Leave destination city empty. 4. Click ‘Search’.
+[8:30:40 pm] Executing 4 sub-actions for step...
+[8:30:40 pm] Sub-action 1: [navigate] matching target "https://blazedemo.com/" with value ""
+[8:30:42 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:42 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:43 pm] Sub-action 2: [fill] matching target "Enter valid departure city." with value "New York"
+[8:30:44 pm] [Error] LOCATOR_FAILURE: Action failed after 1 attempts. Error: Could not locate element matching semantic targets in action text: "Enter valid departure city."
+[8:30:44 pm] Screenshot saved to disk: 3916ea52-405a-426e-acb9-2e676154ecb8-TC_FS_004-step-1.png
+[8:30:44 pm] Finished Test Case. Status: [FAILED]
+[8:30:44 pm] ======================================
+[8:30:44 pm] 🚀 Starting Test Case: TC_BK_001 - Select a flight and proceed to booking
+[8:30:45 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:45 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:45 pm] Navigated to target URL: https://blazedemo.com/
+[8:30:45 pm] --------------------------------------
+[8:30:45 pm] Running Step 1: Perform valid flight search. 2. Select a flight from the results. 3. Click ‘Book’.
+[8:30:45 pm] Executing 3 sub-actions for step...
+[8:30:45 pm] Sub-action 1: [click] matching target "Perform valid flight search." with value ""
+[8:30:46 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/reserve.php' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:46 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:47 pm] Sub-action 2: [click] matching target "Select a flight from the results." with value ""
+[8:30:48 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/purchase.php' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:48 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:49 pm] Sub-action 3: [click] matching target "Click ‘Book’." with value ""
+[8:30:54 pm] [Error] LOCATOR_FAILURE: Action failed after 3 attempts. Error: Could not locate element matching semantic targets in action text: "Click ‘Book’."
+[8:30:54 pm] Screenshot saved to disk: 3916ea52-405a-426e-acb9-2e676154ecb8-TC_BK_001-step-1.png
+[8:30:54 pm] Finished Test Case. Status: [FAILED]
+[8:30:54 pm] ======================================
+[8:30:54 pm] 🚀 Starting Test Case: TC_BK_002 - Attempt booking with incomplete passenger details
+[8:30:55 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:30:55 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:30:55 pm] Navigated to target URL: https://blazedemo.com/
+[8:30:55 pm] --------------------------------------
+[8:30:55 pm] Running Step 1: Proceed to booking page. 2. Leave mandatory fields empty. 3. Click ‘Submit’.
+[8:30:55 pm] Executing 3 sub-actions for step...
+[8:30:55 pm] Sub-action 1: [click] matching target "Proceed to booking page." with value ""
+[8:31:01 pm] [Error] LOCATOR_FAILURE: Action failed after 3 attempts. Error: Could not locate element matching semantic targets in action text: "Proceed to booking page."
+[8:31:01 pm] Screenshot saved to disk: 3916ea52-405a-426e-acb9-2e676154ecb8-TC_BK_002-step-1.png
+[8:31:01 pm] Finished Test Case. Status: [FAILED]
+[8:31:01 pm] ======================================
+[8:31:01 pm] 🚀 Starting Test Case: TC_BK_003 - Attempt booking with invalid zip code
+[8:31:01 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:31:01 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:31:01 pm] Navigated to target URL: https://blazedemo.com/
+[8:31:01 pm] --------------------------------------
+[8:31:01 pm] Running Step 1: Proceed to booking page. 2. Enter non-numeric value in zip code field. 3. Complete other mandatory fields. 4. Click ‘Submit’.
+[8:31:01 pm] Executing 4 sub-actions for step...
+[8:31:01 pm] Sub-action 1: [click] matching target "Proceed to booking page." with value ""
+[8:31:07 pm] [Error] LOCATOR_FAILURE: Action failed after 3 attempts. Error: Could not locate element matching semantic targets in action text: "Proceed to booking page."
+[8:31:07 pm] Screenshot saved to disk: 3916ea52-405a-426e-acb9-2e676154ecb8-TC_BK_003-step-1.png
+[8:31:07 pm] Finished Test Case. Status: [FAILED]
+[8:31:07 pm] ======================================
+[8:31:07 pm] 🚀 Starting Test Case: TC_BK_004 - Attempt booking with invalid credit card number
+[8:31:08 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:31:08 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:31:08 pm] Navigated to target URL: https://blazedemo.com/
+[8:31:08 pm] --------------------------------------
+[8:31:08 pm] Running Step 1: Proceed to booking page. 2. Enter non-numeric value in credit card number field. 3. Complete other mandatory fields. 4. Click ‘Submit’.
+[8:31:08 pm] Executing 4 sub-actions for step...
+[8:31:08 pm] Sub-action 1: [click] matching target "Proceed to booking page." with value ""
+[8:31:13 pm] [Error] LOCATOR_FAILURE: Action failed after 3 attempts. Error: Could not locate element matching semantic targets in action text: "Proceed to booking page."
+[8:31:13 pm] Screenshot saved to disk: 3916ea52-405a-426e-acb9-2e676154ecb8-TC_BK_004-step-1.png
+[8:31:13 pm] Finished Test Case. Status: [FAILED]
+[8:31:13 pm] ======================================
+[8:31:13 pm] 🚀 Starting Test Case: TC_BK_005 - Complete booking with valid payment details
+[8:31:14 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:31:14 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:31:14 pm] Navigated to target URL: https://blazedemo.com/
+[8:31:14 pm] --------------------------------------
+[8:31:14 pm] Running Step 1: Proceed to booking page. 2. Complete all mandatory fields with valid data. 3. Click ‘Submit’.
+[8:31:14 pm] Executing 3 sub-actions for step...
+[8:31:14 pm] Sub-action 1: [click] matching target "Proceed to booking page." with value ""
+[8:31:19 pm] [Error] LOCATOR_FAILURE: Action failed after 3 attempts. Error: Could not locate element matching semantic targets in action text: "Proceed to booking page."
+[8:31:19 pm] Screenshot saved to disk: 3916ea52-405a-426e-acb9-2e676154ecb8-TC_BK_005-step-1.png
+[8:31:19 pm] Finished Test Case. Status: [FAILED]
+[8:31:19 pm] ======================================
+[8:31:19 pm] 🚀 Starting Test Case: TC_PF_001 - Measure page response time for flight search
+[8:31:20 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:31:20 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:31:20 pm] Navigated to target URL: https://blazedemo.com/
+[8:31:20 pm] --------------------------------------
+[8:31:20 pm] Running Step 1: Navigate to flight search page. 2. Enter valid departure and destination cities. 3. Click ‘Search’.
+[8:31:20 pm] Executing 3 sub-actions for step...
+[8:31:20 pm] Sub-action 1: [navigate] matching target "https://blazedemo.com/" with value ""
+[8:31:20 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:31:20 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:31:21 pm] Sub-action 2: [fill] matching target "Enter valid departure and destination cities." with value "standard_user"
+[8:31:22 pm] [Error] LOCATOR_FAILURE: Action failed after 1 attempts. Error: page.fill: Error: Element is not an <input>, <textarea>, <select> or [contenteditable] and does not have a role allowing [aria-readonly]
+Call log:
+[2m  - waiting for locator('a:has-text("destination of the week! The B")')[22m
+[2m    - locator resolved to <a href="vacation.html">destination of the week! The Beach!</a>[22m
+[2m    - fill("standard_user")[22m
+[2m  - attempting fill action[22m
+[2m    - waiting for element to be visible, enabled and editable[22m
+
+[8:31:22 pm] Screenshot saved to disk: 3916ea52-405a-426e-acb9-2e676154ecb8-TC_PF_001-step-1.png
+[8:31:22 pm] Finished Test Case. Status: [FAILED]
+[8:31:22 pm] ======================================
+[8:31:22 pm] 🚀 Starting Test Case: TC_NF_001 - Verify application supports Chrome
+[8:31:22 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:31:22 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:31:22 pm] Navigated to target URL: https://blazedemo.com/
+[8:31:22 pm] --------------------------------------
+[8:31:22 pm] Running Step 1: Open application in Chrome. 2. Perform flight search and booking.
+[8:31:22 pm] Executing 2 sub-actions for step...
+[8:31:22 pm] Sub-action 1: [navigate] matching target "https://blazedemo.com/" with value ""
+[8:31:23 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:31:23 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:31:24 pm] Sub-action 2: [click] matching target "Perform flight search and booking." with value ""
+[8:31:25 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/reserve.php' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:31:25 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:31:26 pm] Applying Deterministic Rule Engine...
+[8:31:26 pm] Rule Engine returned UNKNOWN. Invoking Stage 1 Text AI validation...
+[8:31:43 pm] AI Decision: [PASSED] | Confidence: 0.95
+[8:31:43 pm] Finished Test Case. Status: [PASSED]
+[8:31:43 pm] ======================================
+[8:31:43 pm] 🚀 Starting Test Case: TC_NF_002 - Verify application supports mobile responsiveness
+[8:31:44 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:31:44 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:31:44 pm] Navigated to target URL: https://blazedemo.com/
+[8:31:44 pm] --------------------------------------
+[8:31:44 pm] Running Step 1: Open application on a mobile device. 2. Perform flight search and booking.
+[8:31:44 pm] Executing 2 sub-actions for step...
+[8:31:44 pm] Sub-action 1: [navigate] matching target "https://blazedemo.com/" with value ""
+[8:31:46 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:31:46 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:31:47 pm] Sub-action 2: [click] matching target "Perform flight search and booking." with value ""
+[8:31:48 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/reserve.php' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:31:48 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:31:49 pm] Applying Deterministic Rule Engine...
+[8:31:49 pm] Rule Engine returned UNKNOWN. Invoking Stage 1 Text AI validation...
+[8:32:06 pm] AI Decision: [FAILED] | Confidence: 0.95
+[8:32:06 pm] Finished Test Case. Status: [FAILED]
+[8:32:06 pm] ======================================
+[8:32:06 pm] 🚀 Starting Test Case: TC_SEC_001 - Verify HTTPS is used for all communications
+[8:32:06 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:32:06 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:32:06 pm] Navigated to target URL: https://blazedemo.com/
+[8:32:06 pm] --------------------------------------
+[8:32:06 pm] Running Step 1: Open browser developer tools. 2. Navigate through the application.
+[8:32:06 pm] Executing 2 sub-actions for step...
+[8:32:06 pm] Sub-action 1: [navigate] matching target "https://blazedemo.com/" with value ""
+[8:32:07 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:32:07 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:32:08 pm] Sub-action 2: [navigate] matching target "https://blazedemo.com/" with value ""
+[8:32:08 pm] [Console error] Mixed Content: The page at 'https://blazedemo.com/' was loaded over HTTPS, but requested an insecure script 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'. This request has been blocked; the content must be served over HTTPS.
+[8:32:09 pm] [Network Fail] GET http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js: mixed-content
+[8:32:10 pm] Applying Deterministic Rule Engine...
+[8:32:10 pm] Rule Engine Decision: [PASS]
+[8:32:10 pm] Rule Engine Reasoning: Successfully navigated to and loaded: https://blazedemo.com/
+[8:32:10 pm] Screenshot saved to disk: 3916ea52-405a-426e-acb9-2e676154ecb8-TC_SEC_001-step-1.png
+[8:32:10 pm] Finished Test Case. Status: [PASSED]
+[8:32:11 pm] Trace file saved: 3916ea52-405a-426e-acb9-2e676154ecb8-trace.zip
