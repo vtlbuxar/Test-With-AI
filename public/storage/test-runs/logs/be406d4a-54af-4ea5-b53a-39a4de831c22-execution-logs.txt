@@ -1,0 +1,168 @@
+[System] Enqueued test run be406d4a-54af-4ea5-b53a-39a4de831c22
+[6:47:06 pm] [System] Job queued. Position in queue: 1
+[6:47:07 pm] [System] Worker picked up job. Starting execution...
+[6:47:08 pm] Launching browser chromium in headless mode...
+[6:47:08 pm] ======================================
+[6:47:08 pm] 🚀 Starting Test Case: TC001 - Successful login with valid credentials
+[6:47:09 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:47:09 pm] --------------------------------------
+[6:47:09 pm] Running Step 1: Navigate to the login page. 2. Enter valid username. 3. Enter valid password. 4. Click 'Login' button.
+[6:47:10 pm] [HTTP Error 401] POST https://events.backtrace.io/api/summed-events/submit?universe=UNIVERSE&token=TOKEN
+[6:47:10 pm] [Console error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[6:47:10 pm] [HTTP Error 401] POST https://events.backtrace.io/api/unique-events/submit?universe=UNIVERSE&token=TOKEN
+[6:47:10 pm] [Console error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[6:47:13 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:47:13 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC001-step-1.png
+[6:47:13 pm] Finished Test Case. Status: [FAILED]
+[6:47:13 pm] ======================================
+[6:47:13 pm] 🚀 Starting Test Case: TC002 - Attempt to login with invalid username
+[6:47:14 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:47:14 pm] --------------------------------------
+[6:47:14 pm] Running Step 1: Navigate to the login page. 2. Enter invalid username. 3. Enter valid password. 4. Click 'Login' button.
+[6:47:18 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:47:18 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC002-step-1.png
+[6:47:18 pm] Finished Test Case. Status: [FAILED]
+[6:47:18 pm] ======================================
+[6:47:18 pm] 🚀 Starting Test Case: TC003 - Attempt to login with invalid password
+[6:47:18 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:47:18 pm] --------------------------------------
+[6:47:18 pm] Running Step 1: Navigate to the login page. 2. Enter valid username. 3. Enter invalid password. 4. Click 'Login' button.
+[6:47:23 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:47:23 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC003-step-1.png
+[6:47:23 pm] Finished Test Case. Status: [FAILED]
+[6:47:23 pm] ======================================
+[6:47:23 pm] 🚀 Starting Test Case: TC004 - Attempt to login with empty username field
+[6:47:23 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:47:23 pm] --------------------------------------
+[6:47:23 pm] Running Step 1: Navigate to the login page. 2. Leave username field empty. 3. Enter valid password. 4. Click 'Login' button.
+[6:47:28 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:47:28 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC004-step-1.png
+[6:47:28 pm] Finished Test Case. Status: [FAILED]
+[6:47:28 pm] ======================================
+[6:47:28 pm] 🚀 Starting Test Case: TC005 - Attempt to login with empty password field
+[6:47:28 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:47:28 pm] --------------------------------------
+[6:47:28 pm] Running Step 1: Navigate to the login page. 2. Enter valid username. 3. Leave password field empty. 4. Click 'Login' button.
+[6:47:33 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:47:33 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC005-step-1.png
+[6:47:33 pm] Finished Test Case. Status: [FAILED]
+[6:47:33 pm] ======================================
+[6:47:33 pm] 🚀 Starting Test Case: TC006 - Attempt to login with empty username and password fields
+[6:47:33 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:47:33 pm] --------------------------------------
+[6:47:33 pm] Running Step 1: Navigate to the login page. 2. Leave username field empty. 3. Leave password field empty. 4. Click 'Login' button.
+[6:47:38 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:47:38 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC006-step-1.png
+[6:47:38 pm] Finished Test Case. Status: [FAILED]
+[6:47:38 pm] ======================================
+[6:47:38 pm] 🚀 Starting Test Case: TC007 - Login with maximum allowed characters in username and password fields
+[6:47:39 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:47:39 pm] --------------------------------------
+[6:47:39 pm] Running Step 1: Navigate to the login page. 2. Enter username with maximum allowed characters. 3. Enter password with maximum allowed characters. 4. Click 'Login' button.
+[6:47:43 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:47:43 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC007-step-1.png
+[6:47:43 pm] Finished Test Case. Status: [FAILED]
+[6:47:43 pm] ======================================
+[6:47:43 pm] 🚀 Starting Test Case: TC008 - Attempt to login with username exceeding maximum allowed characters
+[6:47:44 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:47:44 pm] --------------------------------------
+[6:47:44 pm] Running Step 1: Navigate to the login page. 2. Enter username with characters exceeding the maximum allowed limit. 3. Enter valid password. 4. Click 'Login' button.
+[6:47:48 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:47:48 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC008-step-1.png
+[6:47:48 pm] Finished Test Case. Status: [FAILED]
+[6:47:48 pm] ======================================
+[6:47:48 pm] 🚀 Starting Test Case: TC009 - Attempt to login with password exceeding maximum allowed characters
+[6:47:48 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:47:48 pm] --------------------------------------
+[6:47:48 pm] Running Step 1: Navigate to the login page. 2. Enter valid username. 3. Enter password with characters exceeding the maximum allowed limit. 4. Click 'Login' button.
+[6:47:53 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:47:53 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC009-step-1.png
+[6:47:53 pm] Finished Test Case. Status: [FAILED]
+[6:47:53 pm] ======================================
+[6:47:53 pm] 🚀 Starting Test Case: TC010 - Attempt to login with SQL injection in username field
+[6:47:53 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:47:53 pm] --------------------------------------
+[6:47:53 pm] Running Step 1: Navigate to the login page. 2. Enter SQL injection code in username field. 3. Enter valid password. 4. Click 'Login' button.
+[6:47:58 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:47:58 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC010-step-1.png
+[6:47:58 pm] Finished Test Case. Status: [FAILED]
+[6:47:58 pm] ======================================
+[6:47:58 pm] 🚀 Starting Test Case: TC011 - Attempt to login with SQL injection in password field
+[6:47:58 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:47:58 pm] --------------------------------------
+[6:47:58 pm] Running Step 1: Navigate to the login page. 2. Enter valid username. 3. Enter SQL injection code in password field. 4. Click 'Login' button.
+[6:48:03 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:48:03 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC011-step-1.png
+[6:48:03 pm] Finished Test Case. Status: [FAILED]
+[6:48:03 pm] ======================================
+[6:48:03 pm] 🚀 Starting Test Case: TC012 - Attempt to login with XSS payload in username field
+[6:48:03 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:48:03 pm] --------------------------------------
+[6:48:03 pm] Running Step 1: Navigate to the login page. 2. Enter XSS payload in username field. 3. Enter valid password. 4. Click 'Login' button.
+[6:48:08 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:48:08 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC012-step-1.png
+[6:48:08 pm] Finished Test Case. Status: [FAILED]
+[6:48:08 pm] ======================================
+[6:48:08 pm] 🚀 Starting Test Case: TC013 - Attempt to login with XSS payload in password field
+[6:48:08 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:48:08 pm] --------------------------------------
+[6:48:08 pm] Running Step 1: Navigate to the login page. 2. Enter valid username. 3. Enter XSS payload in password field. 4. Click 'Login' button.
+[6:48:13 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:48:13 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC013-step-1.png
+[6:48:13 pm] Finished Test Case. Status: [FAILED]
+[6:48:13 pm] ======================================
+[6:48:13 pm] 🚀 Starting Test Case: TC014 - Attempt to login with special characters in username field
+[6:48:13 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:48:13 pm] --------------------------------------
+[6:48:13 pm] Running Step 1: Navigate to the login page. 2. Enter username with special characters. 3. Enter valid password. 4. Click 'Login' button.
+[6:48:17 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:48:18 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC014-step-1.png
+[6:48:18 pm] Finished Test Case. Status: [FAILED]
+[6:48:18 pm] ======================================
+[6:48:18 pm] 🚀 Starting Test Case: TC015 - Attempt to login with special characters in password field
+[6:48:18 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:48:18 pm] --------------------------------------
+[6:48:18 pm] Running Step 1: Navigate to the login page. 2. Enter valid username. 3. Enter password with special characters. 4. Click 'Login' button.
+[6:48:22 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:48:22 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC015-step-1.png
+[6:48:22 pm] Finished Test Case. Status: [FAILED]
+[6:48:22 pm] ======================================
+[6:48:22 pm] 🚀 Starting Test Case: TC016 - Attempt to login with leading/trailing spaces in username field
+[6:48:22 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:48:22 pm] --------------------------------------
+[6:48:22 pm] Running Step 1: Navigate to the login page. 2. Enter username with leading/trailing spaces. 3. Enter valid password. 4. Click 'Login' button.
+[6:48:27 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:48:27 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC016-step-1.png
+[6:48:27 pm] Finished Test Case. Status: [FAILED]
+[6:48:27 pm] ======================================
+[6:48:27 pm] 🚀 Starting Test Case: TC017 - Attempt to login with leading/trailing spaces in password field
+[6:48:27 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:48:27 pm] --------------------------------------
+[6:48:27 pm] Running Step 1: Navigate to the login page. 2. Enter valid username. 3. Enter password with leading/trailing spaces. 4. Click 'Login' button.
+[6:48:32 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:48:32 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC017-step-1.png
+[6:48:32 pm] Finished Test Case. Status: [FAILED]
+[6:48:32 pm] ======================================
+[6:48:32 pm] 🚀 Starting Test Case: TC018 - Attempt to login after maximum allowed failed attempts
+[6:48:32 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:48:32 pm] --------------------------------------
+[6:48:32 pm] Running Step 1: Navigate to the login page. 2. Enter invalid credentials repeatedly until maximum failed attempts is reached. 3. Attempt to login with valid credentials.
+[6:48:37 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: Navigate to the login page. 2. Enter invalid credentials repeatedly until maximum failed attempts is reached. 3. Attempt to login with valid credentials.
+[6:48:37 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC018-step-1.png
+[6:48:37 pm] Finished Test Case. Status: [FAILED]
+[6:48:37 pm] ======================================
+[6:48:37 pm] 🚀 Starting Test Case: TC019 - Attempt to login with credentials of a deactivated account
+[6:48:37 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:48:37 pm] --------------------------------------
+[6:48:37 pm] Running Step 1: Navigate to the login page. 2. Enter username of a deactivated account. 3. Enter valid password. 4. Click 'Login' button.
+[6:48:42 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:48:42 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC019-step-1.png
+[6:48:42 pm] Finished Test Case. Status: [FAILED]
+[6:48:42 pm] ======================================
+[6:48:42 pm] 🚀 Starting Test Case: TC020 - Attempt to login with credentials of a suspended account
+[6:48:42 pm] Navigated to target URL: https://www.saucedemo.com/
+[6:48:42 pm] --------------------------------------
+[6:48:42 pm] Running Step 1: Navigate to the login page. 2. Enter username of a suspended account. 3. Enter valid password. 4. Click 'Login' button.
+[6:48:47 pm] [Error] Action Execution Failed: Action failed after 3 attempts. Error: Could not locate element matching: 'Login' button.
+[6:48:47 pm] Screenshot saved to disk: be406d4a-54af-4ea5-b53a-39a4de831c22-TC020-step-1.png
+[6:48:47 pm] Finished Test Case. Status: [FAILED]
