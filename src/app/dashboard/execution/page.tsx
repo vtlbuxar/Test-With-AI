@@ -45,6 +45,10 @@ export default function TestExecutionWorkspace() {
   const [triggering, setTriggering] = useState(false);
   const logEndRef = useRef<HTMLDivElement>(null);
 
+  // Per-test-case result state: { [testCaseId]: { status: 'PASSED'|'FAILED'|'BLOCKED', reason: string } }
+  const [tcResults, setTcResults] = useState<Record<string, { status: string; reason: string }>>({});
+  const [completedRunId, setCompletedRunId] = useState<string | null>(null);
+
   // Load projects from API
   useEffect(() => {
     async function loadData() {
@@ -102,8 +106,47 @@ export default function TestExecutionWorkspace() {
             setCurrentStepIndex(data.currentStepIndex || 0);
             setTotalSteps(data.totalSteps || 0);
 
+            // Update live per-test-case results from in-memory job
+            if (data.tcResultsMap && Object.keys(data.tcResultsMap).length > 0) {
+              setTcResults(data.tcResultsMap);
+            }
+
             if (data.status === 'Completed' || data.status === 'Cancelled') {
               setActiveRunId(null);
+              setCompletedRunId(activeRunId);
+
+              // Also extract from dbDetails as final fallback
+              if (data.dbDetails?.executions) {
+                const results: Record<string, { status: string; reason: string }> = { ...data.tcResultsMap };
+                for (const exec of data.dbDetails.executions) {
+                  const tcId =
+                    exec.testCaseVersion?.testCase?.testCaseId ||
+                    exec.testCaseVersion?.testCase?.title ||
+                    `case-${exec.id}`;
+
+                  if (!results[tcId]) {
+                    const steps: any[] = exec.steps || [];
+                    const firstFailed = steps.find(
+                      (s: any) => s.status === 'FAILED' || s.status === 'BLOCKED'
+                    );
+                    let reason = 'All steps completed successfully.';
+                    if (firstFailed?.actualResult) {
+                      const observedMatch = firstFailed.actualResult.match(
+                        /###\s*Observed\n([\s\S]*?)(?=\n\n###|$)/i
+                      );
+                      reason = observedMatch
+                        ? observedMatch[1].trim()
+                        : firstFailed.actualResult
+                            .replace(/###\s*(Expected|Observed|Reasoning|Status)[:\s]*/gi, '')
+                            .replace(/\*\*/g, '')
+                            .trim()
+                            .slice(0, 200);
+                    }
+                    results[tcId] = { status: exec.status, reason };
+                  }
+                }
+                setTcResults(results);
+              }
             }
           }
         } catch (e) {
@@ -360,24 +403,102 @@ export default function TestExecutionWorkspace() {
           {selectedProjectId && testCases.length > 0 && executionMode === 'selected' && (
             <Card className="border-slate-200 bg-white shadow-sm overflow-hidden transition-all duration-300">
               <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/30">
-                <CardTitle className="text-xs font-bold text-slate-700 uppercase tracking-wider">Select Test Cases ({selectedTestCaseIds.length}/{testCases.length})</CardTitle>
+                <CardTitle className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
+                  <span>
+                    {Object.keys(tcResults).length > 0
+                      ? `Results (${Object.values(tcResults).filter(r => r.status === 'PASSED').length} passed / ${Object.values(tcResults).filter(r => r.status !== 'PASSED').length} failed)`
+                      : `Select Test Cases (${selectedTestCaseIds.length}/${testCases.length})`
+                    }
+                  </span>
+                  {Object.keys(tcResults).length > 0 && completedRunId && (
+                    <a
+                      href={`/dashboard/execution/report/${completedRunId}`}
+                      className="text-[10px] text-blue-600 font-semibold underline underline-offset-2 hover:text-blue-800"
+                    >
+                      Full Report →
+                    </a>
+                  )}
+                </CardTitle>
               </CardHeader>
-              <div className="max-h-72 overflow-y-auto divide-y divide-slate-100 p-2 text-xs">
+              <div className="max-h-[420px] overflow-y-auto divide-y divide-slate-100 p-2 text-xs">
                 {testCases.map((tc: any) => {
+                  const result = tcResults[tc.test_case_id];
+                  const isRunning = !!activeRunId;
                   const isChecked = selectedTestCaseIds.includes(tc.test_case_id);
+                  const passed = result?.status === 'PASSED';
+                  const failed = result && result.status !== 'PASSED';
+
                   return (
-                    <label key={tc.test_case_id} className="flex items-start space-x-3 p-2.5 hover:bg-slate-50 rounded-lg cursor-pointer transition-all">
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => handleCheckboxToggle(tc.test_case_id)}
-                        className="mt-0.5 border-slate-200 rounded text-slate-900 focus:ring-slate-400"
-                      />
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-slate-800">{tc.test_case_id}</span>
-                        <span className="text-slate-500 text-[10px] mt-0.5 line-clamp-2">{tc.summary || tc.title}</span>
-                      </div>
-                    </label>
+                    <div
+                      key={tc.test_case_id}
+                      className={`p-2.5 rounded-lg transition-all ${
+                        result
+                          ? passed
+                            ? 'bg-emerald-50/60 border border-emerald-100'
+                            : 'bg-red-50/60 border border-red-100'
+                          : 'hover:bg-slate-50'
+                      }`}
+                    >
+                      {result ? (
+                        // ── Result mode ──
+                        <div className="flex items-start gap-2.5">
+                          {/* Status icon */}
+                          <div className={`mt-0.5 shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-white text-[9px] font-bold ${
+                            passed ? 'bg-emerald-500' : 'bg-red-500'
+                          }`}>
+                            {passed ? '✓' : '✗'}
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            {/* ID + badge row */}
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-bold text-slate-800">{tc.test_case_id}</span>
+                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border shrink-0 ${
+                                passed
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-red-50 text-red-700 border-red-200'
+                              }`}>
+                                {result.status}
+                              </span>
+                            </div>
+
+                            {/* Description */}
+                            <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-1">
+                              {tc.summary || tc.title}
+                            </p>
+
+                            {/* Reason (only for failed) */}
+                            {failed && (
+                              <p className="text-[10px] text-red-600 font-medium mt-1 line-clamp-2">
+                                {result.reason}
+                              </p>
+                            )}
+                            {passed && (
+                              <p className="text-[10px] text-emerald-600 font-medium mt-1">
+                                All steps passed.
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        // ── Selection mode ──
+                        <label className="flex items-start space-x-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => handleCheckboxToggle(tc.test_case_id)}
+                            disabled={isRunning}
+                            className="mt-0.5 border-slate-200 rounded text-slate-900 focus:ring-slate-400"
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-slate-800">{tc.test_case_id}</span>
+                            <span className="text-slate-500 text-[10px] mt-0.5 line-clamp-2">
+                              {tc.summary || tc.title}
+                            </span>
+                          </div>
+                        </label>
+                      )}
+                    </div>
                   );
                 })}
               </div>
@@ -419,9 +540,9 @@ export default function TestExecutionWorkspace() {
               <div>
                 <CardTitle className="text-sm font-bold text-slate-900 flex items-center">
                   <Terminal className="h-4 w-4 mr-2 text-slate-500" />
-                  Live Execution Console Streamer
+                  Live Execution Console
                 </CardTitle>
-                <CardDescription className="text-xs mt-0.5">Real-time validation events feed</CardDescription>
+                <CardDescription className="text-xs mt-0.5">Real-time pass/fail events</CardDescription>
               </div>
               {activeRunId && (
                 <div className="flex items-center space-x-1">
@@ -431,24 +552,43 @@ export default function TestExecutionWorkspace() {
               )}
             </CardHeader>
 
-            <div className="flex-1 bg-slate-950 p-4 font-mono text-[11px] text-slate-300 overflow-y-auto space-y-1.5 rounded-b-lg border-t border-slate-900">
+            <div className="flex-1 bg-slate-950 p-4 font-mono text-[11px] text-slate-300 overflow-y-auto space-y-1 rounded-b-lg border-t border-slate-900">
               {progressLogs.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-slate-600 space-y-2">
                   <Terminal className="h-8 w-8 text-slate-800" />
                   <span>Terminal idle. Start a new execution context to stream logs.</span>
                 </div>
               ) : (
-                progressLogs.map((log, idx) => (
-                  <div key={idx} className={
-                    log.includes('[Error]') ? 'text-red-400' :
-                    log.includes('[Control]') ? 'text-amber-400' :
-                    log.includes('🚀') ? 'text-cyan-400 font-bold' :
-                    log.includes('✓') || log.includes('[Passed]') ? 'text-green-400' :
-                    log.includes('[System]') ? 'text-indigo-400' : 'text-slate-300'
-                  }>
-                    {log}
-                  </div>
-                ))
+                progressLogs.map((log, idx) => {
+                  // Determine line style based on content
+                  const isPassed = log.includes('[Passed]') || log.includes('AI Decision: [Passed]') || log.includes('✓');
+                  const isFailed = log.includes('[Failed]') || log.includes('AI Decision: [Failed]') || log.includes('[Error]') || log.includes('LOCATOR_FAILURE') || log.includes('FAILED');
+                  const isHeader = log.includes('🚀') || log.includes('Starting Test Case');
+                  const isSystem = log.includes('[System]');
+                  const isControl = log.includes('[Control]') || log.includes('[Network');
+                  const isReason = log.includes('AI Reasoning:') || log.includes('Reason:');
+
+                  const lineClass =
+                    isHeader  ? 'text-cyan-300 font-bold border-l-2 border-cyan-600 pl-2' :
+                    isPassed  ? 'text-emerald-400' :
+                    isFailed  ? 'text-red-400' :
+                    isReason  ? 'text-amber-300 pl-4 italic' :
+                    isSystem  ? 'text-indigo-400' :
+                    isControl ? 'text-amber-400' :
+                                'text-slate-400';
+
+                  const prefix =
+                    isPassed ? '✓ ' :
+                    isFailed ? '✗ ' :
+                    isHeader ? '' :
+                    isReason ? '  ↳ ' : '';
+
+                  return (
+                    <div key={idx} className={lineClass}>
+                      {prefix}{log}
+                    </div>
+                  );
+                })
               )}
               <div ref={logEndRef}></div>
             </div>

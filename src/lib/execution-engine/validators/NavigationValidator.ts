@@ -6,7 +6,7 @@ export class NavigationValidator implements BaseValidator {
     page: Page,
     stepText: string,
     expectedResult: string,
-    action: { actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select'; target: string; value: string },
+    action: { actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select' | 'check' | 'uncheck'; target: string; value: string },
     evidence: ValidationEvidence
   ): Promise<ValidatorResult> {
     if (action.actionType !== 'navigate') {

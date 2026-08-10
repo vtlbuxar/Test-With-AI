@@ -18,6 +18,7 @@ export interface ValidationEvidence {
   disabledElements: string[];
   formValues: Record<string, string>;
   networkResponseStatusMap: Record<string, number>;
+  responseBodies?: Record<string, string>; // selective network payload capture
 }
 
 export interface ValidatorResult {
@@ -30,7 +31,7 @@ export interface BaseValidator {
     page: Page,
     stepText: string,
     expectedResult: string,
-    action: { actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select'; target: string; value: string },
+    action: { actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select' | 'check' | 'uncheck'; target: string; value: string },
     evidence: ValidationEvidence
   ): Promise<ValidatorResult>;
 }

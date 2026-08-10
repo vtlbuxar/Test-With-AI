@@ -13,6 +13,8 @@ export interface ExecutionJob {
   currentStepIndex: number;
   totalSteps: number;
   createdAt: number;
+  // Live per-test-case results: { [testCaseId]: { status, reason } }
+  tcResultsMap: Record<string, { status: string; reason: string }>;
 }
 
 class QueueManager extends EventEmitter {
@@ -45,6 +47,7 @@ class QueueManager extends EventEmitter {
       currentStepIndex: 0,
       totalSteps: 0,
       createdAt: Date.now(),
+      tcResultsMap: {},
     };
 
     this.queue.push(job);
@@ -69,9 +72,17 @@ class QueueManager extends EventEmitter {
   public addLog(runId: string, message: string) {
     const job = this.jobHistory[runId];
     if (job) {
+      // ─── REDACT SENSITIVE SECRETS ─────────────────────────────────────────
+      let cleaned = message;
+      // Redact standard OpenRouter, OpenAI, and Google Gemini API keys
+      cleaned = cleaned.replace(/(sk-or-v1-[a-zA-Z0-9]{32,}|sk-[a-zA-Z0-9]{20,}|AIzaSy[a-zA-Z0-9_-]{33})/gi, '[REDACTED_API_KEY]');
+      // Redact passwords in logged command outputs and actions
+      cleaned = cleaned.replace(/(password["'\s:=]+)[^"'\s,;\}]+/gi, '$1[REDACTED_PASSWORD]');
+      cleaned = cleaned.replace(/(secret_sauce|user!@#\$%)/gi, '[REDACTED_SECRET]');
+
       const timestamp = new Date().toLocaleTimeString();
-      job.progressLogs.push(`[${timestamp}] ${message}`);
-      this.emit('progress', { runId, message });
+      job.progressLogs.push(`[${timestamp}] ${cleaned}`);
+      this.emit('progress', { runId, message: cleaned });
     }
   }
 

@@ -3,6 +3,7 @@ import { queueManager, ExecutionJob, RunControlState } from './queue';
 import { chromium, firefox, webkit, Browser, BrowserContext, Page } from 'playwright';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { createOpenAI } from '@ai-sdk/openai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateObject } from 'ai';
@@ -14,6 +15,7 @@ import { FillValidator } from './validators/FillValidator';
 import { ClickValidator } from './validators/ClickValidator';
 import { AuthenticationValidator } from './validators/AuthenticationValidator';
 import { LayoutValidator } from './validators/LayoutValidator';
+import { AssertionValidator } from './validators/AssertionValidator';
 
 // Ensure directories exist
 const SCREENSHOT_DIR = path.join(process.cwd(), 'public', 'storage', 'test-runs', 'screenshots');
@@ -39,7 +41,7 @@ async function isElementVisible(page: Page, selector: string): Promise<boolean> 
 
 // Selector search hierarchy helper
 async function locateElementDirect(page: Page, actionDetail: string): Promise<string | null> {
-  const cleanDetail = actionDetail.replace(/['"]/g, '').trim();
+  const cleanDetail = actionDetail.replace(/['"‘’“”]/g, '').trim();
 
   // Try common strategies sequentially
   const selectorStrategies = [
@@ -231,15 +233,49 @@ async function locateElement(page: Page, actionDetail: string): Promise<string |
 }
 
 // Action text parsing helper
-export function parseSubAction(subStep: string, websiteUrl: string): { actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select', target: string, value: string } {
+export function parseSubAction(subStep: string, websiteUrl: string): { actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select' | 'check' | 'uncheck', target: string, value: string, expandedSteps?: Array<{ actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select' | 'check' | 'uncheck', target: string, value: string }> } {
   const text = subStep.toLowerCase();
   
-  let actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select' = 'click';
+  let actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select' | 'check' | 'uncheck' = 'click';
   let target = '';
   let value = '';
 
-  // Check observe/verify
-  if (text.includes('observe') || text.includes('verify') || text.includes('confirm') || text.includes('assert') || text.includes('check') || text.includes('should be') || text.includes('is displayed') || text.includes('layout') || text.includes('functionality') || text.includes('measure') || text.includes('ensure')) {
+  // ─── AMBIGUITY GUARD ─────────────────────────────────────────────────────────
+  // If the step is a single token (number, single char, or word < 3 chars),
+  // it is too ambiguous to act on — route to observe (AI will decide)
+  const trimmed = subStep.trim();
+  const singleTokenPattern = /^[\d\w]{1,2}$|^\d+(\.\d+)?$|^[^\s]{1,2}$/;
+  if (singleTokenPattern.test(trimmed)) {
+    return { actionType: 'observe', target: subStep, value: '' };
+  }
+
+  // ─── CREDENTIALS EXPANSION ───────────────────────────────────────────────────
+  // "enter valid credentials" / "enter credentials" / "fill in valid login details"
+  // → expand to TWO actions: fill username + fill password
+  const credentialsPattern = /\b(valid\s+)?credentials?\b|\bvalid\s+(login|user)\s+details?\b|\benter\s+(valid\s+)?username\s+and\s+password\b/i;
+  if (credentialsPattern.test(text) && (text.includes('enter') || text.includes('fill') || text.includes('input') || text.includes('use'))) {
+    return {
+      actionType: 'fill',
+      target: 'username',
+      value: 'standard_user',
+      expandedSteps: [
+        { actionType: 'fill', target: 'username field', value: 'standard_user' },
+        { actionType: 'fill', target: 'password field', value: 'secret_sauce' }
+      ]
+    };
+  }
+
+  // ─── CHECKBOX / RADIO VERBS ──────────────────────────────────────────────────
+  const isCheckboxOrRadio = text.includes('checkbox') || text.includes('radio') || text.includes('agree') || text.includes('accept') || text.includes('terms') || text.includes('policy') || text.includes('box');
+  
+  if (text.includes('uncheck') && isCheckboxOrRadio) {
+    return { actionType: 'uncheck', target: subStep, value: '' };
+  } else if ((text.includes('check') || text.includes('select') || text.includes('choose')) && isCheckboxOrRadio && !text.includes('verify') && !text.includes('should be')) {
+    return { actionType: 'check', target: subStep, value: '' };
+  }
+
+  // Check observe/verify (ensuring it's not checked as checkbox above)
+  if (text.includes('observe') || text.includes('verify') || text.includes('confirm') || text.includes('assert') || (text.includes('check') && !isCheckboxOrRadio) || text.includes('should be') || text.includes('is displayed') || text.includes('layout') || text.includes('functionality') || text.includes('measure') || text.includes('ensure')) {
     actionType = 'observe';
     target = subStep;
   }
@@ -307,8 +343,8 @@ export function parseSubAction(subStep: string, websiteUrl: string): { actionTyp
   else if (text.includes('enter') || text.includes('type') || text.includes('fill') || text.includes('input') || text.includes('leave') || text.includes('password') || text.includes('username')) {
     actionType = 'fill';
     
-    // Extract quoted value if present
-    const quotedMatch = subStep.match(/["']([^"']+)["']/);
+    // Extract quoted value if present (supporting straight and fancy curly quotes)
+    const quotedMatch = subStep.match(/["'“‘”’]([^"'“‘”’]+)["'“‘”’]/);
     if (quotedMatch) {
       value = quotedMatch[1];
     } else {
@@ -362,10 +398,11 @@ export function parseSubAction(subStep: string, websiteUrl: string): { actionTyp
   return { actionType, target, value };
 }
 
+
 // Action retry decorator helper
 async function performActionWithRetry(
   page: Page,
-  actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select',
+  actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select' | 'check' | 'uncheck',
   target: string,
   value?: string
 ): Promise<void> {
@@ -380,6 +417,13 @@ async function performActionWithRetry(
   while (attempt < allowedRetries) {
     try {
       if (actionType === 'navigate') {
+        const currentUrl = page.url();
+        const cleanCurrent = currentUrl.replace(/\/$/, '').toLowerCase();
+        const cleanTarget = target.replace(/\/$/, '').toLowerCase();
+        if (cleanCurrent === cleanTarget) {
+          console.log(`[SmartNavigation] Already on ${target}. Skipping navigation.`);
+          return;
+        }
         await page.goto(target, { waitUntil: 'load', timeout: 15000 });
         return;
       }
@@ -393,6 +437,26 @@ async function performActionWithRetry(
         const dropdownSelector = await locateDropdown(page, target);
         if (!dropdownSelector) {
           throw new Error(`Could not locate dropdown element matching: "${target}"`);
+        }
+
+        // Check select ambiguity
+        const matches = await page.$$(dropdownSelector);
+        if (matches.length > 1) {
+          const visibleMatches = [];
+          for (const el of matches) {
+            if (await el.isVisible().catch(() => false)) {
+              visibleMatches.push(el);
+            }
+          }
+          if (visibleMatches.length > 1) {
+            const candidateDetails = await page.evaluate((sel) => {
+              return Array.from(document.querySelectorAll(sel))
+                .filter((el: any) => el.offsetParent !== null)
+                .map((el: any) => `<${el.tagName.toLowerCase()} id="${el.id || ''}" name="${el.name || ''}">`);
+            }, dropdownSelector).catch(() => []);
+
+            throw new Error(`LOCATOR_AMBIGUOUS: Multiple candidate dropdown elements (${candidateDetails.length}) match the selector "${dropdownSelector}". Candidates: ${candidateDetails.join(', ')}`);
+          }
         }
 
         // Resolve the actual option value from the DOM at runtime
@@ -429,7 +493,50 @@ async function performActionWithRetry(
 
       const selector = await locateElement(page, target);
       if (!selector) {
-        throw new Error(`Could not locate element matching semantic targets in action text: "${target}"`);
+        // ─── STRUCTURED LOCATOR DIAGNOSTICS ─────────────────────────────────
+        const domSnapshot = await page.evaluate(() => {
+          const inputs = Array.from(document.querySelectorAll('input, button, a, textarea, select, [role="button"]'))
+            .filter((el: any) => el.offsetParent !== null)
+            .slice(0, 12)
+            .map((el: any) => ({
+              tag: el.tagName.toLowerCase(),
+              id: el.id || null,
+              name: el.name || null,
+              type: el.type || null,
+              placeholder: el.placeholder || null,
+              ariaLabel: el.getAttribute('aria-label') || null,
+              text: (el.innerText || el.value || '').trim().slice(0, 40) || null
+            }));
+          return inputs;
+        }).catch(() => []);
+
+        const domInfo = domSnapshot.length > 0
+          ? `\n  Visible elements on page (${domSnapshot.length}): ${domSnapshot.map((e: any) => `<${e.tag}${e.id ? ` id="${e.id}"` : ''}${e.name ? ` name="${e.name}"` : ''}${e.placeholder ? ` placeholder="${e.placeholder}"` : ''}${e.text ? ` text="${e.text}"` : ''}>`).join(', ')}`
+          : '\n  No visible interactive elements found on page.';
+
+        throw new Error(
+          `Could not locate element.\n  Step: "${target}"\n  Action: ${actionType}\n  Keywords tried: ${target.toLowerCase().replace(/click|press|the|a|an|on|button|link|input|field|into|and|with|to|of/g, '').trim()}${domInfo}\n  Tip: Rephrase step to name the specific field (e.g. "Enter value in Username field").`
+        );
+      }
+
+      // Check selector ambiguity
+      const matches = await page.$$(selector);
+      if (matches.length > 1) {
+        const visibleMatches = [];
+        for (const el of matches) {
+          if (await el.isVisible().catch(() => false)) {
+            visibleMatches.push(el);
+          }
+        }
+        if (visibleMatches.length > 1) {
+          const candidateDetails = await page.evaluate((sel) => {
+            return Array.from(document.querySelectorAll(sel))
+              .filter((el: any) => el.offsetParent !== null)
+              .map((el: any) => `<${el.tagName.toLowerCase()} id="${el.id || ''}" name="${el.name || ''}" text="${(el.innerText || el.value || '').trim().slice(0, 30)}">`);
+          }, selector).catch(() => []);
+
+          throw new Error(`LOCATOR_AMBIGUOUS: Multiple candidate elements (${candidateDetails.length}) match the locator selector "${selector}". Candidates: ${candidateDetails.join(', ')}`);
+        }
       }
 
       if (actionType === 'click') {
@@ -446,6 +553,32 @@ async function performActionWithRetry(
         }
       } else if (actionType === 'fill') {
         await page.fill(selector, value || '', { timeout: 5000 });
+      } else if (actionType === 'check' || actionType === 'uncheck') {
+        // Assert that the target element is indeed a checkable input/role element
+        const isCheckable = await page.evaluate((sel) => {
+          const el = document.querySelector(sel) as HTMLInputElement | null;
+          if (!el) return false;
+          const tag = el.tagName.toLowerCase();
+          const type = el.type ? el.type.toLowerCase() : '';
+          const role = el.getAttribute('role') || '';
+          return (tag === 'input' && (type === 'checkbox' || type === 'radio')) || role === 'checkbox' || role === 'radio';
+        }, selector).catch(() => false);
+
+        if (!isCheckable) {
+          throw new Error(`Target element "${target}" (resolved as selector "${selector}") is not a checkbox or radio button.`);
+        }
+
+        const isCurrentlyChecked = await page.isChecked(selector, { timeout: 2000 }).catch(() => false);
+
+        if (actionType === 'check') {
+          if (!isCurrentlyChecked) {
+            await page.check(selector, { timeout: 5000 });
+          }
+        } else {
+          if (isCurrentlyChecked) {
+            await page.uncheck(selector, { timeout: 5000 });
+          }
+        }
       }
       return; // Success
     } catch (e: any) {
@@ -464,7 +597,7 @@ async function runRuleEngine(
   page: Page,
   stepText: string,
   expectedResult: string,
-  action: { actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select'; target: string; value: string },
+  action: { actionType: 'click' | 'fill' | 'navigate' | 'observe' | 'key' | 'select' | 'check' | 'uncheck'; target: string; value: string },
   evidence: ValidationEvidence
 ): Promise<ValidatorResult> {
   const validators: BaseValidator[] = [
@@ -472,7 +605,8 @@ async function runRuleEngine(
     new LayoutValidator(),
     new NavigationValidator(),
     new FillValidator(),
-    new ClickValidator()
+    new ClickValidator(),
+    new AssertionValidator()
   ];
 
   for (const validator of validators) {
@@ -492,12 +626,41 @@ async function runRuleEngine(
   };
 }
 
+// Helper to load cache of AI validation results
+function loadAiCache(): Record<string, { status: 'Passed' | 'Failed' | 'Blocked'; reasoning: string; confidence: number; cachedAt: number }> {
+  try {
+    const cachePath = path.join(process.cwd(), 'public', 'storage', 'test-runs', 'ai-validation-cache.json');
+    if (fs.existsSync(cachePath)) {
+      const data = fs.readFileSync(cachePath, 'utf-8');
+      return JSON.parse(data);
+    }
+  } catch (e) {
+    console.warn('[Cache] Failed to load AI cache file:', e);
+  }
+  return {};
+}
+
+// Helper to save cache of AI validation results
+function saveAiCache(cache: Record<string, { status: 'Passed' | 'Failed' | 'Blocked'; reasoning: string; confidence: number; cachedAt: number }>) {
+  try {
+    const cachePath = path.join(process.cwd(), 'public', 'storage', 'test-runs', 'ai-validation-cache.json');
+    const dir = path.dirname(cachePath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(cachePath, JSON.stringify(cache, null, 2), 'utf-8');
+  } catch (e) {
+    console.warn('[Cache] Failed to save AI cache file:', e);
+  }
+}
+
 // AI Validation Layer using OpenRouter DeepSeek (with Gemini fallback)
 async function runAiValidation(
   stepAction: string,
   expectedResult: string,
   evidence: ValidationEvidence,
-  screenshotPath?: string
+  screenshotPath?: string,
+  runId?: string
 ): Promise<{ status: 'Passed' | 'Failed' | 'Blocked'; reasoning: string; confidence: number }> {
   try {
     const apiKey = process.env.OPENROUTER_API_KEY || process.env.DEEPSEEK_API_KEY || process.env.GEMINI_API_KEY || '';
@@ -506,6 +669,29 @@ async function runAiValidation(
         status: 'Blocked',
         reasoning: 'AI Validation Service Unavailable: No OpenRouter, DeepSeek or Gemini API Keys configured in server environment variables.',
         confidence: 0
+      };
+    }
+
+    // Hash key: combines step, expected, url, and a snippet of page body to detect change
+    const cacheKey = crypto
+      .createHash('sha256')
+      .update(`${stepAction}||${expectedResult}||${evidence.url}||${evidence.bodyText?.slice(0, 800) || ''}`)
+      .digest('hex');
+
+    const cache = loadAiCache();
+    const cachedEntry = cache[cacheKey];
+
+    // TTL check (24 hours = 86,400,000 ms)
+    if (cachedEntry && (Date.now() - cachedEntry.cachedAt < 86400000)) {
+      const logMsg = `[Cache Hit] Re-used cached AI decision (confidence: ${Math.round(cachedEntry.confidence * 100)}%)`;
+      console.log(logMsg);
+      if (runId) {
+        queueManager.addLog(runId, logMsg);
+      }
+      return {
+        status: cachedEntry.status,
+        reasoning: cachedEntry.reasoning,
+        confidence: cachedEntry.confidence
       };
     }
 
@@ -540,7 +726,10 @@ async function runAiValidation(
 
     // Build structured evidence context prompt (excluding bodyText to keep prompt tokens clean)
     const cleanEvidence = { ...evidence };
-    delete (cleanEvidence as any).bodyText;
+    // Keep a truncated version of the bodyText for text search assertions
+    if (cleanEvidence.bodyText) {
+      cleanEvidence.bodyText = cleanEvidence.bodyText.slice(0, 2000);
+    }
 
     const basePrompt = `
 You are a senior QA engineering validator evaluating test execution outcomes.
@@ -553,8 +742,9 @@ Page Evidence Context JSON:
 ${JSON.stringify(cleanEvidence, null, 2)}
 
 Strict Validation Rules:
-1. For authentication error checks, be extremely strict. Expected message 'Username is required' is NOT met if the page shows 'Password is required' or redirect successfully. Wordings may differ slightly but the core error condition must match.
-2. If expected result is dashboard navigation redirection, verify redirection path in URL, removal of login form fields, and logout controls.
+1. Base your decision strictly on the provided Page Evidence. Do NOT assume, invent, or extrapolate facts that are not present in the URL, title, inputs, visibleElements, responseBodies, or page body text.
+2. For authentication error checks, be extremely strict. Expected message 'Username is required' is NOT met if the page shows 'Password is required' or redirect successfully. Wordings may differ slightly but the core error condition must match.
+3. If expected result is dashboard navigation redirection, verify redirection path in URL, removal of login form fields, and logout controls.
 
 Your response MUST match this JSON schema:
 {
@@ -628,6 +818,18 @@ Your response MUST match this JSON schema:
       }
     }
 
+    // Save conclusive result to cache
+    if (result.status === 'Passed' || result.status === 'Failed') {
+      const updatedCache = loadAiCache();
+      updatedCache[cacheKey] = {
+        status: result.status === 'Passed' ? 'Passed' : 'Failed',
+        reasoning: result.reasoning,
+        confidence: result.confidence,
+        cachedAt: Date.now()
+      };
+      saveAiCache(updatedCache);
+    }
+
     return {
       status: result.status === 'Passed' ? 'Passed' : 'Failed',
       reasoning: result.reasoning,
@@ -660,87 +862,103 @@ Your response MUST match this JSON schema:
   }
 }
 
-async function getOrCreateDummyTestCaseVersionId(projectId: string, userId: string): Promise<string> {
-  console.log(`[DB-Debug] getOrCreateDummyTestCaseVersionId called for project: ${projectId}, user: ${userId}`);
+async function getOrCreateRealTestCaseVersionId(projectId: string, userId: string, tc: any): Promise<string> {
+  console.log(`[DB-Debug] getOrCreateRealTestCaseVersionId called for project: ${projectId}, tcId: ${tc.test_case_id}`);
 
-  // 1. Get or create dummy TestScenario
+  // 1. Get or create a TestScenario for the AI executor context
   let scenario = await prisma.testScenario.findFirst({
-    where: { projectId, scenarioCode: 'AI-EXEC-DUMMY' }
+    where: { projectId, scenarioCode: 'AI-EXEC-SCENARIO' }
   });
   if (!scenario) {
-    console.log(`[DB-Debug] Creating dummy TestScenario...`);
     scenario = await prisma.testScenario.create({
       data: {
         projectId,
-        scenarioCode: 'AI-EXEC-DUMMY'
+        scenarioCode: 'AI-EXEC-SCENARIO'
       }
     });
   }
-  console.log(`[DB-Debug] TestScenario resolved: ${scenario.id}`);
 
-  // 2. Get or create dummy TestScenarioVersion
   let scenarioVersion = await prisma.testScenarioVersion.findFirst({
     where: { scenarioId: scenario.id }
   });
   if (!scenarioVersion) {
-    console.log(`[DB-Debug] Creating dummy TestScenarioVersion...`);
     scenarioVersion = await prisma.testScenarioVersion.create({
       data: {
         scenarioId: scenario.id,
         versionNumber: 1,
-        title: 'Dummy Scenario for Execution',
-        description: 'Auto-generated for validation reports.',
+        title: 'AI Automated Test Suite',
+        description: 'Auto-generated scenarios for executed validation reports.',
         uploadedById: userId
       }
     });
   }
-  console.log(`[DB-Debug] TestScenarioVersion resolved: ${scenarioVersion.id}`);
 
-  // 3. Get or create dummy TestCase
+  // 2. Get or create TestCase
   let testCase = await prisma.testCase.findFirst({
-    where: { projectId, testCaseCode: 'AI-EXEC-DUMMY' }
+    where: { projectId, testCaseCode: tc.test_case_id }
   });
   if (!testCase) {
-    console.log(`[DB-Debug] Creating dummy TestCase...`);
     testCase = await prisma.testCase.create({
       data: {
         projectId,
-        testCaseCode: 'AI-EXEC-DUMMY'
+        testCaseCode: tc.test_case_id
       }
     });
   }
-  console.log(`[DB-Debug] TestCase resolved: ${testCase.id}`);
 
-  // 4. Get or create dummy TestCaseVersion
+  // 3. Get or create TestCaseVersion
   let testCaseVersion = await prisma.testCaseVersion.findFirst({
     where: { testCaseId: testCase.id }
   });
+
   if (!testCaseVersion) {
-    console.log(`[DB-Debug] Creating dummy TestCaseVersion...`);
+    // Sanitize priority enum string to uppercase (expects HIGH, MEDIUM, LOW)
+    let finalPriority: 'HIGH' | 'MEDIUM' | 'LOW' = 'MEDIUM';
+    if (tc.priority) {
+      const upperPri = tc.priority.toUpperCase();
+      if (upperPri === 'HIGH' || upperPri === 'MEDIUM' || upperPri === 'LOW') {
+        finalPriority = upperPri;
+      }
+    }
+
+    // Sanitize severity enum string to uppercase (expects CRITICAL, MAJOR, MINOR, TRIVIAL)
+    let finalSeverity: 'CRITICAL' | 'MAJOR' | 'MINOR' | 'TRIVIAL' = 'MAJOR';
+    if (tc.severity) {
+      const upperSev = tc.severity.toUpperCase();
+      if (upperSev === 'CRITICAL' || upperSev === 'MAJOR' || upperSev === 'MINOR' || upperSev === 'TRIVIAL') {
+        finalSeverity = upperSev;
+      }
+    }
+
     testCaseVersion = await prisma.testCaseVersion.create({
       data: {
         testCaseId: testCase.id,
         scenarioVersionId: scenarioVersion.id,
         versionNumber: 1,
-        title: 'Dummy Case for Execution',
-        priority: 'MEDIUM',
-        severity: 'MAJOR',
+        title: tc.summary || tc.title || tc.test_case_id,
+        priority: finalPriority,
+        severity: finalSeverity,
         automationStatus: 'AUTOMATED',
         uploadedById: userId
       }
     });
-  }
-  console.log(`[DB-Debug] TestCaseVersion resolved: ${testCaseVersion.id}`);
 
-  // Verify existency in database
-  const verification = await prisma.testCaseVersion.findUnique({
-    where: { id: testCaseVersion.id }
-  });
-  if (!verification) {
-    throw new Error(`Critical DB verification failed: TestCaseVersion ID ${testCaseVersion.id} was created/found but could not be queried back from DB!`);
+    // Create nested step descriptions/expected results if available
+    const stepsArray = tc.steps ? tc.steps.split('\n').filter((s: string) => s.trim().length > 0) : [];
+    const expectedArray = tc.expected_results ? tc.expected_results.split('\n').filter((s: string) => s.trim().length > 0) : [];
+
+    for (let i = 0; i < stepsArray.length; i++) {
+      await prisma.testCaseStep.create({
+        data: {
+          testCaseVersionId: testCaseVersion.id,
+          stepNumber: i + 1,
+          action: stepsArray[i].trim(),
+          expectedResult: expectedArray[i]?.trim() || 'Verify action completes successfully.'
+        }
+      });
+    }
   }
 
-  console.log(`[DB-Debug] TestCaseVersion fully verified in DB: ${verification.id}`);
   return testCaseVersion.id;
 }
 
@@ -765,8 +983,6 @@ export async function executeTestRun(job: ExecutionJob) {
   ensureDirectories();
 
   let browser: Browser | null = null;
-  let context: BrowserContext | null = null;
-  let page: Page | null = null;
 
   const consoleLogs: string[] = [];
   const networkLogs: string[] = [];
@@ -814,38 +1030,6 @@ export async function executeTestRun(job: ExecutionJob) {
       throw new Error(`Playwright browser binaries not installed. Details: ${e.message || e}`);
     }
 
-    context = await browser.newContext({
-      viewport: { width: 1280, height: 720 },
-      recordVideo: { dir: VIDEO_DIR, size: { width: 1280, height: 720 } }
-    });
-
-    // Start tracing
-    await context.tracing.start({ screenshots: true, snapshots: true, sources: true }).catch(() => {});
-
-    page = await context.newPage();
-
-    // Attach Loggers
-    page.on('console', msg => {
-      const log = `[Console ${msg.type()}] ${msg.text()}`;
-      consoleLogs.push(log);
-      queueManager.addLog(runId, log);
-    });
-
-    page.on('requestfailed', req => {
-      const err = `[Network Fail] ${req.method()} ${req.url()}: ${req.failure()?.errorText}`;
-      networkLogs.push(err);
-      queueManager.addLog(runId, err);
-    });
-
-    page.on('response', res => {
-      const key = `${res.request().method()} ${res.url()}`;
-      networkResponseStatusMap[key] = res.status();
-      if (res.status() >= 400) {
-        const err = `[HTTP Error ${res.status()}] ${res.request().method()} ${res.url()}`;
-        networkLogs.push(err);
-        queueManager.addLog(runId, err);
-      }
-    });
 
     // Determine total steps
     let totalSteps = 0;
@@ -860,25 +1044,91 @@ export async function executeTestRun(job: ExecutionJob) {
 
     const runStartTime = Date.now();
 
-    // 3. Loop through test cases
-    for (const tc of selectedTestCases) {
+    // 3. Batch Test Cases for Parallel Execution (up to 3 in parallel)
+    const concurrencyLimit = 3;
+    const batches: any[][] = [];
+    for (let i = 0; i < selectedTestCases.length; i += concurrencyLimit) {
+      batches.push(selectedTestCases.slice(i, i + concurrencyLimit));
+    }
+
+    for (const batch of batches) {
       await checkPauseState(runId);
+
+      await Promise.all(
+        batch.map(async (tc) => {
+          const tcStartTime = Date.now();
+          const logPrefix = `[${tc.test_case_id}]`;
+          
+          queueManager.addLog(runId, `${logPrefix} ======================================`);
+          queueManager.addLog(runId, `${logPrefix} 🚀 Starting Test Case: ${tc.test_case_id} - ${tc.summary || tc.title}`);
       
-      const tcStartTime = Date.now();
-      queueManager.addLog(runId, `======================================`);
-      queueManager.addLog(runId, `🚀 Starting Test Case: ${tc.test_case_id} - ${tc.summary || tc.title}`);
-      
-      // Get valid testCaseVersionId pointing to a real DB record (satisfies foreign key constraints)
-      const dummyVersionId = await getOrCreateDummyTestCaseVersionId(projectId, project.userId);
-      console.log(`[Executor] Using verified dummyVersionId: ${dummyVersionId}`);
+      // Get valid testCaseVersionId pointing to a real DB record
+      const realVersionId = await getOrCreateRealTestCaseVersionId(projectId, project.userId, tc);
+      console.log(`[Executor] Using resolved realVersionId: ${realVersionId}`);
 
       // Create Database TestExecution
       const dbExecution = await prisma.testExecution.create({
         data: {
           runId,
-          testCaseVersionId: dummyVersionId,
+          testCaseVersionId: realVersionId,
           status: 'PENDING',
           startedAt: new Date(),
+        }
+      });
+
+      // ─── PER-TEST-CASE BROWSER CONTEXT ISOLATION ─────────────────────────────
+      // Create a fresh context and page for each TC to prevent state leaking
+      // (e.g. login cookies from TC1 bleeding into TC2)
+      const tcConsoleLogs: string[] = [];
+      const tcNetworkLogs: string[] = [];
+      const tcNetworkStatusMap: Record<string, number> = {};
+      const tcResponseBodies: Record<string, string> = {};
+      let currentExpectedResult = '';
+
+      const tcContext = await browser!.newContext({
+        viewport: { width: 1280, height: 720 },
+        recordVideo: { dir: VIDEO_DIR, size: { width: 1280, height: 720 } }
+      });
+      await tcContext.tracing.start({ screenshots: true, snapshots: true, sources: true }).catch(() => {});
+      const tcPage = await tcContext.newPage();
+
+      tcPage.on('console', msg => {
+        const log = `[Console ${msg.type()}] ${msg.text()}`;
+        tcConsoleLogs.push(log);
+        queueManager.addLog(runId, log);
+      });
+      tcPage.on('requestfailed', req => {
+        const err = `[Network Fail] ${req.method()} ${req.url()}: ${req.failure()?.errorText}`;
+        tcNetworkLogs.push(err);
+        queueManager.addLog(runId, err);
+      });
+      tcPage.on('response', res => {
+        const key = `${res.request().method()} ${res.url()}`;
+        tcNetworkStatusMap[key] = res.status();
+        if (res.status() >= 400) {
+          const err = `[HTTP Error ${res.status()}] ${res.request().method()} ${res.url()}`;
+          tcNetworkLogs.push(err);
+          queueManager.addLog(runId, err);
+        }
+
+        // Selective response body payload capture
+        const url = res.url().toLowerCase();
+        const expectedLower = currentExpectedResult.toLowerCase();
+        const isApi = url.includes('/api/') || url.includes('/json') || url.includes('/graphql') || url.includes('/auth') ||
+                      expectedLower.includes('response') || expectedLower.includes('body') || expectedLower.includes('payload') || expectedLower.includes('json') || expectedLower.includes('status');
+        if (isApi) {
+          res.text().then(text => {
+            let bodyText = text;
+            if (bodyText.length > 102400) {
+              bodyText = bodyText.slice(0, 102400) + '... [TRUNCATED DUE TO SIZE LIMIT]';
+            }
+            // Scrub sensitive data before storing
+            let cleaned = bodyText;
+            cleaned = cleaned.replace(/(sk-or-v1-[a-zA-Z0-9]{32,}|sk-[a-zA-Z0-9]{20,}|AIzaSy[a-zA-Z0-9_-]{33})/gi, '[REDACTED_API_KEY]');
+            cleaned = cleaned.replace(/(password["'\s:=]+)[^"'\s,;\}]+/gi, '$1[REDACTED_PASSWORD]');
+            cleaned = cleaned.replace(/(secret_sauce|user!@#\$%)/gi, '[REDACTED_SECRET]');
+            tcResponseBodies[key] = cleaned;
+          }).catch(() => {});
         }
       });
 
@@ -890,7 +1140,7 @@ export async function executeTestRun(job: ExecutionJob) {
 
       // Navigate to website URL first
       try {
-        await performActionWithRetry(page, 'navigate', websiteUrl);
+        await performActionWithRetry(tcPage, 'navigate', websiteUrl);
         queueManager.addLog(runId, `Navigated to target URL: ${websiteUrl}`);
       } catch (e: any) {
         allStepsPassed = false;
@@ -906,6 +1156,7 @@ export async function executeTestRun(job: ExecutionJob) {
           const stepNum = idx + 1;
           const stepText = rawSteps[idx].replace(/^\d+[\.\s\-]+/, '').trim(); // clean step prefix number
           const expected = tc.expected_result || '';
+          currentExpectedResult = expected;
           
           queueManager.addLog(runId, `--------------------------------------`);
           queueManager.addLog(runId, `Running Step ${stepNum}: ${stepText}`);
@@ -952,15 +1203,24 @@ export async function executeTestRun(job: ExecutionJob) {
             for (let subIdx = 0; subIdx < subSteps.length; subIdx++) {
               const subStep = subSteps[subIdx];
               const parsed = parseSubAction(subStep, websiteUrl);
-              
-              queueManager.addLog(runId, `Sub-action ${subIdx + 1}: [${parsed.actionType}] matching target "${parsed.target}" with value "${parsed.value}"`);
-              
-              await performActionWithRetry(page, parsed.actionType, parsed.target, parsed.value);
-              await page.waitForTimeout(1000); // stable wait
+
+              // Handle expandedSteps (e.g. credentials → username + password fill)
+              if (parsed.expandedSteps && parsed.expandedSteps.length > 0) {
+                queueManager.addLog(runId, `Sub-action ${subIdx + 1}: [credentials expansion] → ${parsed.expandedSteps.length} sub-fills`);
+                for (const expanded of parsed.expandedSteps) {
+                  queueManager.addLog(runId, `  ↳ [${expanded.actionType}] target="${expanded.target}" value="${expanded.value}"`);
+                  await performActionWithRetry(tcPage, expanded.actionType, expanded.target, expanded.value);
+                  await tcPage.waitForTimeout(600);
+                }
+              } else {
+                queueManager.addLog(runId, `Sub-action ${subIdx + 1}: [${parsed.actionType}] matching target "${parsed.target}" with value "${parsed.value}"`);
+                await performActionWithRetry(tcPage, parsed.actionType, parsed.target, parsed.value);
+                await tcPage.waitForTimeout(1000); // stable wait
+              }
             }
 
             // 1. Gather page evidence
-            const evidence = await collectEvidence(page, consoleLogs, networkLogs, networkResponseStatusMap);
+            const evidence = await collectEvidence(tcPage, tcConsoleLogs, tcNetworkLogs, tcNetworkStatusMap, tcResponseBodies);
 
             const isLastStep = (idx === rawSteps.length - 1);
             stepExpectedResult = isLastStep ? expected : `The step action "${stepText}" completes successfully without error.`;
@@ -971,7 +1231,7 @@ export async function executeTestRun(job: ExecutionJob) {
 
             // 2. Invoke Pluggable Rule Engine
             queueManager.addLog(runId, `Applying Deterministic Rule Engine...`);
-            const ruleResult = await runRuleEngine(page, stepText, stepExpectedResult, parsedAction, evidence);
+            const ruleResult = await runRuleEngine(tcPage, stepText, stepExpectedResult, parsedAction, evidence);
 
             statusMapping = 'PASSED';
             stepActual = '';
@@ -994,10 +1254,10 @@ export async function executeTestRun(job: ExecutionJob) {
               const screenshotFilename = `${runId}-${tc.test_case_id}-step-${stepNum}.png`;
               const screenshotPath = path.join(SCREENSHOT_DIR, screenshotFilename);
               try {
-                await page.screenshot({ path: screenshotPath });
+                await tcPage.screenshot({ path: screenshotPath });
               } catch (e) {}
 
-              const aiResult = await runAiValidation(stepText, stepExpectedResult, evidence, screenshotPath);
+              const aiResult = await runAiValidation(stepText, stepExpectedResult, evidence, screenshotPath, runId);
               confidence = aiResult.confidence;
               
               // Map AI status with confidence boundaries
@@ -1032,7 +1292,9 @@ export async function executeTestRun(job: ExecutionJob) {
             const msg = e.message?.toLowerCase() || '';
             let classification = 'SYSTEM_ERROR';
 
-            if (msg.includes('locate') || msg.includes('selector') || msg.includes('element')) {
+            if (msg.includes('locator_ambiguous') || msg.includes('ambiguous')) {
+              classification = 'LOCATOR_AMBIGUOUS';
+            } else if (msg.includes('locate') || msg.includes('selector') || msg.includes('element')) {
               classification = 'LOCATOR_FAILURE';
             } else if (msg.includes('timeout') || msg.includes('timed out')) {
               classification = 'TIMEOUT';
@@ -1048,8 +1310,10 @@ export async function executeTestRun(job: ExecutionJob) {
               classification = 'ENVIRONMENT_FAILURE';
             }
 
-            stepActual = `### Status: ${classification}\n\n### Expected\n${stepExpectedResult || 'Verify action completes.'}\n\n### Observed\n${e.message}\n\n### Recommendation\nVerify selectors, server status, or page state.`;
-            queueManager.addLog(runId, `[Error] ${classification}: ${e.message}`);
+            const isValidationFailure = classification === 'ASSERTION_FAILURE';
+            const failurePhase = isValidationFailure ? 'VALIDATION CHECK' : 'ACTION EXECUTION';
+            stepActual = `### Failure Phase: ${failurePhase}\n### Status: ${classification}\n\n### Expected\n${stepExpectedResult || 'Verify action completes.'}\n\n### Observed\n${e.message}\n\n### Recommendation\nVerify selectors, server status, or page state.`;
+            queueManager.addLog(runId, `[Error] ${classification} during ${failurePhase}: ${e.message}`);
           }
 
           // Take Step Screenshot (if not taken already)
@@ -1057,7 +1321,7 @@ export async function executeTestRun(job: ExecutionJob) {
           const screenshotPath = path.join(SCREENSHOT_DIR, screenshotFilename);
           if (!fs.existsSync(screenshotPath)) {
             try {
-              await page.screenshot({ path: screenshotPath });
+              await tcPage.screenshot({ path: screenshotPath });
               queueManager.addLog(runId, `Screenshot saved to disk: ${screenshotFilename}`);
             } catch (e) {
               queueManager.addLog(runId, `[Warning] Failed to capture step screenshot`);
@@ -1114,16 +1378,34 @@ export async function executeTestRun(job: ExecutionJob) {
         }
       });
 
-      queueManager.addLog(runId, `Finished Test Case. Status: [${finalStatus}]`);
+      // Write live result into in-memory job for real-time UI polling
+      const plainReason = allStepsPassed
+        ? 'All steps completed successfully.'
+        : tcFailureReason
+            .replace(/###\s*(Expected|Observed|Reasoning|Status|Recommendation)[:\s]*/gi, '')
+            .replace(/\*\*/g, '')
+            .trim()
+            .slice(0, 220);
+
+      const liveJob = queueManager.getJob(runId);
+      if (liveJob) {
+        liveJob.tcResultsMap[tc.test_case_id] = { status: finalStatus, reason: plainReason };
+      }
+
+      queueManager.addLog(runId, `${logPrefix} Finished Test Case. Status: [${finalStatus}]`);
+
+      // ─── CLEANUP ISOLATED BROWSER CONTEXT ────────────────────────────────────
+      try {
+        const traceFilename = `${runId}-${tc.test_case_id}-trace.zip`;
+        await tcContext.tracing.stop({ path: path.join(LOG_DIR, traceFilename) }).catch(() => {});
+      } catch (_) {}
+      await tcPage.close().catch(() => {});
+      await tcContext.close().catch(() => {});
+        })
+      );
     }
 
-    // Stop Playwright Tracing if context exists
-    if (context) {
-      const traceFilename = `${runId}-trace.zip`;
-      const tracePath = path.join(LOG_DIR, traceFilename);
-      await context.tracing.stop({ path: tracePath }).catch(() => {});
-      queueManager.addLog(runId, `Trace file saved: ${traceFilename}`);
-    }
+    // (Context cleanup is now done per-test-case above)
 
     // 5. Complete Database run metrics
     const totalDuration = Date.now() - runStartTime;
@@ -1155,6 +1437,30 @@ export async function executeTestRun(job: ExecutionJob) {
     const logPath = path.join(LOG_DIR, logFilename);
     fs.writeFileSync(logPath, job.progressLogs.join('\n'));
 
+    // Write structured JSON report to a file
+    try {
+      const fullRunDetails = await prisma.testRun.findUnique({
+        where: { id: runId },
+        include: {
+          executions: {
+            include: {
+              steps: true,
+              testCaseVersion: true
+            }
+          },
+          metrics: true
+        }
+      });
+      if (fullRunDetails) {
+        const jsonReportFilename = `${runId}-structured-report.json`;
+        const jsonReportPath = path.join(LOG_DIR, jsonReportFilename);
+        fs.writeFileSync(jsonReportPath, JSON.stringify(fullRunDetails, null, 2), 'utf-8');
+        queueManager.addLog(runId, `Structured JSON report saved to disk: ${jsonReportFilename}`);
+      }
+    } catch (e: any) {
+      queueManager.addLog(runId, `[Warning] Failed to generate structured JSON report: ${e.message}`);
+    }
+
     queueManager.addLog(runId, `======================================`);
     queueManager.addLog(runId, `🎉 Test Run Completed Successfully! Log file saved.`);
     queueManager.updateJobStatus(runId, 'Completed');
@@ -1176,8 +1482,6 @@ export async function executeTestRun(job: ExecutionJob) {
     queueManager.updateJobStatus(runId, statusText);
   } finally {
     // Graceful cleanups
-    if (page) await page.close().catch(() => {});
-    if (context) await context.close().catch(() => {});
     if (browser) await browser.close().catch(() => {});
   }
 }

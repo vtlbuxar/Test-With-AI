@@ -17,7 +17,27 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Missing runId query parameter' }, { status: 400 });
     }
 
-    // 1. Check in active/in-memory queue history
+    // 1. Always query database details first (including nested test case title relations)
+    const dbRun = await prisma.testRun.findUnique({
+      where: { id: runId },
+      include: {
+        executions: {
+          include: {
+            steps: true,
+            attachments: true,
+            testCaseVersion: {
+              include: {
+                testCase: true,
+                steps: true
+              }
+            }
+          }
+        },
+        metrics: true
+      }
+    });
+
+    // 2. Check if in active/in-memory queue history
     const memoryJob = queueManager.getJob(runId);
     if (memoryJob) {
       return NextResponse.json({
@@ -26,29 +46,17 @@ export async function GET(req: NextRequest) {
         progressLogs: memoryJob.progressLogs,
         currentStepIndex: memoryJob.currentStepIndex,
         totalSteps: memoryJob.totalSteps,
-        createdAt: memoryJob.createdAt
+        createdAt: memoryJob.createdAt,
+        tcResultsMap: memoryJob.tcResultsMap || {},
+        dbDetails: dbRun || undefined
       }, { status: 200 });
     }
-
-    // 2. Fallback: Query the database details
-    const dbRun = await prisma.testRun.findUnique({
-      where: { id: runId },
-      include: {
-        executions: {
-          include: {
-            steps: true,
-            attachments: true
-          }
-        },
-        metrics: true
-      }
-    });
 
     if (!dbRun) {
       return NextResponse.json({ error: 'Job execution run not found' }, { status: 404 });
     }
 
-    // Map DB status to clean progress logs
+    // 3. Fallback: Completed run log construction
     const completedLogs = [
       `[System] Load execution from archive...`,
       `[System] Run started at ${dbRun.startedAt?.toLocaleTimeString() || dbRun.createdAt.toLocaleTimeString()}`,
@@ -63,6 +71,7 @@ export async function GET(req: NextRequest) {
       currentStepIndex: dbRun.metrics?.totalTests || 0,
       totalSteps: dbRun.metrics?.totalTests || 0,
       createdAt: dbRun.createdAt.getTime(),
+      tcResultsMap: {},
       dbDetails: dbRun
     }, { status: 200 });
 

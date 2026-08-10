@@ -5,7 +5,8 @@ export async function collectEvidence(
   page: Page,
   consoleLogs: string[],
   networkLogs: string[],
-  networkResponseStatusMap: Record<string, number> = {}
+  networkResponseStatusMap: Record<string, number> = {},
+  responseBodies: Record<string, string> = {}
 ): Promise<ValidationEvidence> {
   const url = page.url();
   const title = await page.title().catch(() => '');
@@ -18,7 +19,11 @@ export async function collectEvidence(
     inputElements.forEach((el: any) => {
       const key = el.id || el.name || el.placeholder || el.tagName.toLowerCase();
       if (key) {
-        data[key] = el.value || '';
+        if (el.type === 'checkbox' || el.type === 'radio') {
+          data[key] = el.checked ? 'true' : 'false';
+        } else {
+          data[key] = el.value || '';
+        }
       }
     });
     return data;
@@ -104,6 +109,7 @@ export async function collectEvidence(
     links,
     disabledElements,
     formValues,
-    networkResponseStatusMap
+    networkResponseStatusMap,
+    responseBodies
   };
 }
