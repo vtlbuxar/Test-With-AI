@@ -12,7 +12,7 @@ import { Loader2, UploadCloud, FileText, X, CheckCircle, AlertTriangle, Star, Do
 import * as xlsx from "xlsx";
 import { storage, Project } from "@/lib/storage";
 import Link from "next/link";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from "@/lib/use-auth";
 import { AIUsageCenter } from "@/components/dashboard/ai-usage-center";
 
@@ -357,6 +357,7 @@ export default function TestAnalystPage() {
   };
 
   // Input State
+  const searchParams = useSearchParams();
   const [inputMethod, setInputMethod] = useState<"TEXT" | "FILE">("TEXT");
   const [file, setFile] = useState<File | null>(null);
   const [requirement, setRequirement] = useState("");
@@ -365,6 +366,28 @@ export default function TestAnalystPage() {
   const [projectId, setProjectId] = useState<string>("");
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
   const [selectedVersion, setSelectedVersion] = useState<string>("latest");
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editBannerDismissed, setEditBannerDismissed] = useState(false);
+
+  // Pre-load existing project when ?edit=<projectId> is in the URL
+  useEffect(() => {
+    const editId = searchParams?.get('edit');
+    if (!editId) return;
+    storage.getProject(editId).then(proj => {
+      if (!proj) return;
+      setProjectId(proj.id);
+      setCurrentProject(proj);
+      setRequirement(proj.requirementText || "");
+      setInputMethod("TEXT");
+      if (proj.analysis) setAnalysisData(proj.analysis);
+      if (proj.scenarios) setScenariosData(proj.scenarios);
+      if (proj.testCases) setTestCasesData(proj.testCases);
+      if (proj.rtm) setRtmData(proj.rtm);
+      if (proj.suites) setSuitesData(proj.suites);
+      setIsEditMode(true);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   useEffect(() => {
     if (projectId) {
@@ -847,6 +870,21 @@ export default function TestAnalystPage() {
 
   return (
     <div className="container mx-auto p-6 max-w-7xl space-y-8">
+      {/* Edit Mode Banner */}
+      {isEditMode && !editBannerDismissed && (
+        <div className="flex items-center justify-between gap-4 px-4 py-3 rounded-lg border border-amber-300 bg-amber-50 text-amber-900 text-sm font-medium shadow-sm">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-400 text-white text-xs font-bold">✏</span>
+            <span><strong>Edit &amp; Regenerate Mode</strong> — You are editing an existing project. Modify the requirement below and click <em>Run All</em> (or individual sections) to regenerate and update it.</span>
+          </div>
+          <button
+            onClick={() => setEditBannerDismissed(true)}
+            className="ml-auto text-amber-600 hover:text-amber-900 transition-colors text-lg leading-none"
+            title="Dismiss"
+          >×</button>
+        </div>
+      )}
+
       <div className="flex justify-between items-center">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">AI Test Analyst</h1>

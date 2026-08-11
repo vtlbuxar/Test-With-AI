@@ -6,7 +6,7 @@ import { storage, Project } from "@/lib/storage";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, CheckCircle, AlertTriangle, Star, LogOut, User } from "lucide-react";
+import { ArrowLeft, CheckCircle, AlertTriangle, Star, LogOut, User, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { TestCaseEditor } from "@/components/dashboard/test-case-editor";
@@ -57,6 +57,12 @@ export default function ProjectDetailsPage() {
         </div>
         <div className="flex items-center gap-3">
           <AIUsageCenter />
+          <Link href={`/?edit=${project.id}`}>
+            <Button variant="outline" className="border-amber-300 text-amber-700 bg-amber-50 hover:bg-amber-100 hover:text-amber-800 font-semibold flex items-center gap-1.5">
+              <RefreshCw className="w-4 h-4" />
+              <span>Edit &amp; Regenerate</span>
+            </Button>
+          </Link>
           <Link href="/dashboard/execution">
             <Button variant="outline" className="border-slate-300 text-slate-700 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 font-semibold flex items-center gap-1.5">
               <span>Execute Test Cases ⭐</span>

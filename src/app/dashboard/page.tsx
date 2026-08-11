@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Project, storage } from "@/lib/storage";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FolderGit2, Calendar, ArrowRight, Trash2, ChevronDown, ChevronUp, LogOut, User } from "lucide-react";
+import { FolderGit2, Calendar, ArrowRight, Trash2, ChevronDown, ChevronUp, LogOut, User, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/lib/use-auth";
 import { AIUsageCenter } from "@/components/dashboard/ai-usage-center";
@@ -171,8 +171,17 @@ export default function DashboardPage() {
                           {project.suites && <span className="text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded-full font-medium dark:bg-teal-900/30 dark:text-teal-300">Suites</span>}
                         </div>
                       </CardContent>
-                      <CardFooter className="pt-4 border-t">
-                        <Link href={`/dashboard/${project.id}`} className="w-full">
+                      <CardFooter className="pt-4 border-t flex gap-2">
+                        <Link href={`/?edit=${project.id}`} className="flex-1">
+                          <Button
+                            variant="outline"
+                            className="w-full justify-center gap-1.5 border-amber-300 text-amber-700 bg-amber-50 hover:bg-amber-100 hover:text-amber-900 text-xs font-semibold"
+                          >
+                            <RefreshCw className="w-3.5 h-3.5" />
+                            Regenerate
+                          </Button>
+                        </Link>
+                        <Link href={`/dashboard/${project.id}`} className="flex-1">
                           <Button variant="ghost" className="w-full justify-between group-hover:bg-primary/5">
                             View Details
                             <ArrowRight className="w-4 h-4" />
