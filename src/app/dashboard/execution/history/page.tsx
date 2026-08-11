@@ -40,6 +40,50 @@ export default function TestExecutionHistory() {
     loadHistory();
   }, [statusFilter]);
 
+  const getAIHeaders = (): HeadersInit => {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (typeof window === "undefined") return headers;
+    
+    try {
+      const providersStr = localStorage.getItem("ai_providers");
+      if (!providersStr) return headers;
+      
+      const parsedProviders = JSON.parse(providersStr);
+      const activeProviders = Object.keys(parsedProviders).reduce((acc, key) => {
+        acc[key] = { apiKey: parsedProviders[key].apiKey };
+        return acc;
+      }, {} as Record<string, { apiKey: string }>);
+
+      const defaultModelId = localStorage.getItem("ai_default_model") || "gemini-1.5-flash";
+      const modelsStr = localStorage.getItem("ai_models_order");
+      let fallbackOrder: string[] = [];
+      if (modelsStr) {
+        try {
+          fallbackOrder = JSON.parse(modelsStr).filter((m: any) => m.enabled).map((m: any) => m.id);
+        } catch {}
+      }
+
+      const aiConfig = {
+        providers: activeProviders,
+        fallbackOrder,
+        defaultModel: defaultModelId,
+      };
+
+      headers["x-ai-config"] = encodeURIComponent(JSON.stringify(aiConfig));
+      
+      const geminiKey = localStorage.getItem("geminiApiKey") || "";
+      if (geminiKey) {
+        headers["x-gemini-api-key"] = geminiKey;
+      }
+    } catch (e) {
+      console.error("Failed to build AI headers:", e);
+    }
+
+    return headers;
+  };
+
   const handleReRun = async (run: any) => {
     try {
       const selectedProject = run.project;
@@ -47,7 +91,7 @@ export default function TestExecutionHistory() {
 
       const res = await fetch('/api/execute', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAIHeaders(),
         body: JSON.stringify({
           projectId: selectedProject.id,
           testCaseIds: run.metrics ? Array(run.metrics.totalTests).fill('') : [], // placeholder trigger

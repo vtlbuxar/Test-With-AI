@@ -100,7 +100,7 @@ const INITIAL_PROVIDERS = {
 };
 
 const INITIAL_MODELS: ModelItem[] = [
-  { id: "gemini-2.0-flash", name: "Gemini 2.0 Flash (Free Tier)", providerId: "gemini", enabled: true },
+  { id: "gemini-1.5-flash", name: "Gemini 2.0 Flash (Free Tier)", providerId: "gemini", enabled: true },
   { id: "gemini-1.5-pro", name: "Gemini 1.5 Pro", providerId: "gemini", enabled: false },
   { id: "gemini-1.5-flash", name: "Gemini 1.5 Flash (Free Tier)", providerId: "gemini", enabled: false },
   { id: "claude-3-5-sonnet-latest", name: "Claude 3.5 Sonnet", providerId: "anthropic", enabled: true },
@@ -150,7 +150,7 @@ export default function TestAnalystPage() {
   });
 
   const [models, setModels] = useState<ModelItem[]>(INITIAL_MODELS);
-  const [defaultModelId, setDefaultModelId] = useState<string>("gemini-2.0-flash");
+  const [defaultModelId, setDefaultModelId] = useState<string>("gemini-1.5-flash");
   const [generationSummaries, setGenerationSummaries] = useState<Record<string, GenerationSummary>>({});
   const [fallbackAlert, setFallbackAlert] = useState<{ failedModel: string; successModel: string; reason?: string } | null>(null);
 
@@ -199,8 +199,8 @@ export default function TestAnalystPage() {
         if (hasDeprecated) {
           // Force reset models order and defaults to clean up stale entries
           setModels(INITIAL_MODELS);
-          setDefaultModelId("gemini-2.0-flash");
-          saveAISettings(currentProviders, INITIAL_MODELS, "gemini-2.0-flash");
+          setDefaultModelId("gemini-1.5-flash");
+          saveAISettings(currentProviders, INITIAL_MODELS, "gemini-1.5-flash");
         } else {
           const ordered = [...INITIAL_MODELS];
           ordered.sort((a, b) => {
@@ -224,7 +224,7 @@ export default function TestAnalystPage() {
       if (INITIAL_MODELS.some(m => m.id === savedDefault)) {
         setDefaultModelId(savedDefault);
       } else {
-        setDefaultModelId("gemini-2.0-flash");
+        setDefaultModelId("gemini-1.5-flash");
       }
     }
   }, []);
@@ -1769,7 +1769,7 @@ export default function TestAnalystPage() {
                                     let nextDefault = defaultModelId;
                                     if (m.id === defaultModelId && !m.enabled) {
                                       const firstEnabled = updated.find(x => x.enabled);
-                                      nextDefault = firstEnabled ? firstEnabled.id : "gemini-2.0-flash";
+                                      nextDefault = firstEnabled ? firstEnabled.id : "gemini-1.5-flash";
                                       setDefaultModelId(nextDefault);
                                     }
                                     saveAISettings(providers, updated, nextDefault);

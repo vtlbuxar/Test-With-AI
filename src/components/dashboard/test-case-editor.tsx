@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Edit2, Copy, Trash2, Save, X, AlertTriangle } from "lucide-react";
+import { Plus, Edit2, Copy, Trash2, Save, X, AlertTriangle, DownloadCloud } from "lucide-react";
 import { storage } from "@/lib/storage";
 
 // The exact structure of our test case objects
@@ -169,6 +169,39 @@ export function TestCaseEditor({ projectId, initialTestCases, onSaveCompleted }:
     return 'bg-slate-100 text-slate-800';
   };
 
+  const handleExportPOM = async (tc: TestCase) => {
+    try {
+      const geminiKey = localStorage.getItem('gemini_api_key') || '';
+      // We will need a URL. For now, prompt the user or use a default.
+      const url = window.prompt("Enter the target URL for this test case execution:", "http://localhost:3000");
+      if (!url) return;
+
+      const response = await fetch('/api/export-pom', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-gemini-api-key': geminiKey
+        },
+        body: JSON.stringify({ testCase: tc, url })
+      });
+
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `playwright-tests-${tc.test_case_id}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (e: any) {
+      alert("Export failed: " + e.message);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-muted/30 p-4 rounded-lg border">
@@ -299,6 +332,9 @@ export function TestCaseEditor({ projectId, initialTestCases, onSaveCompleted }:
                         </Button>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-700 hover:bg-slate-50" onClick={() => handleDuplicate(tc)} title="Duplicate">
                           <Copy className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50" onClick={() => handleExportPOM(tc)} title="Export Playwright POM">
+                          <DownloadCloud className="w-4 h-4" />
                         </Button>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => confirmDelete(tc.test_case_id)} title="Delete">
                           <Trash2 className="w-4 h-4" />

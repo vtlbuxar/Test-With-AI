@@ -38,13 +38,13 @@ export default function AdminDashboard() {
 
   // AI Configurations State
   const [providers, setProviders] = useState({
-    gemini: { enabled: true, model: 'gemini-2.0-flash', temp: 0.2, key: '••••••••••••••••' },
+    gemini: { enabled: true, model: 'gemini-1.5-flash', temp: 0.2, key: '••••••••••••••••' },
     openai: { enabled: false, model: 'gpt-4o', temp: 0.5, key: '••••••••••••••••' },
     claude: { enabled: false, model: 'claude-3-5-sonnet', temp: 0.3, key: '••••••••••••••••' },
     groq: { enabled: true, model: 'llama-3.1-8b-instant', temp: 0.1, key: '••••••••••••••••' }
   });
 
-  const [fallbackOrder, setFallbackOrder] = useState(['gemini-2.0-flash', 'llama-3.1-8b-instant', 'gpt-4o', 'claude-3-5-sonnet']);
+  const [fallbackOrder, setFallbackOrder] = useState(['gemini-1.5-flash', 'llama-3.1-8b-instant', 'gpt-4o', 'claude-3-5-sonnet']);
 
   // Fetch admin dashboard info
   const loadData = async () => {

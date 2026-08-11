@@ -5,7 +5,8 @@ export async function collectEvidence(
   page: Page,
   consoleLogs: string[],
   networkLogs: string[],
-  networkResponseStatusMap: Record<string, number> = {}
+  networkResponseStatusMap: Record<string, number> = {},
+  responseBodies: Record<string, string> = {}
 ): Promise<ValidationEvidence> {
   const url = page.url();
   const title = await page.title().catch(() => '');
@@ -104,6 +105,7 @@ export async function collectEvidence(
     links,
     disabledElements,
     formValues,
-    networkResponseStatusMap
+    networkResponseStatusMap,
+    responseBodies
   };
 }

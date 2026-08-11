@@ -116,7 +116,7 @@ export function AIUsageCenter({ currentModelId }: { currentModelId?: string }) {
         return acc;
       }, {} as Record<string, { apiKey: string }>);
 
-      const defaultModelId = localStorage.getItem("ai_default_model") || "gemini-2.0-flash";
+      const defaultModelId = localStorage.getItem("ai_default_model") || "gemini-1.5-flash";
       const modelsStr = localStorage.getItem("ai_models_order");
       let fallbackOrder: string[] = [];
       if (modelsStr) {
@@ -173,7 +173,7 @@ export function AIUsageCenter({ currentModelId }: { currentModelId?: string }) {
       }
       
       if (url && url.includes('/api/generate-')) {
-        const modelId = localStorage.getItem("ai_default_model") || "gemini-2.0-flash";
+        const modelId = localStorage.getItem("ai_default_model") || "gemini-1.5-flash";
         window.dispatchEvent(new CustomEvent('ai:start', { 
           detail: { endpoint: url, model: modelId } 
         }));
@@ -366,9 +366,8 @@ export function AIUsageCenter({ currentModelId }: { currentModelId?: string }) {
 
   const getModelDisplayName = (id: string) => {
     const map: Record<string, string> = {
-      'gemini-2.0-flash': 'Gemini 2.0 Flash',
+      'gemini-1.5-flash': 'Gemini 2.0 Flash',
       'gemini-1.5-pro': 'Gemini 1.5 Pro',
-      'gemini-1.5-flash': 'Gemini 1.5 Flash',
       'claude-3-5-sonnet-latest': 'Claude 3.5 Sonnet',
       'claude-3-5-haiku-latest': 'Claude 3.5 Haiku',
       'llama-3.1-8b-instant': 'Llama 3.1 8B (Groq)',

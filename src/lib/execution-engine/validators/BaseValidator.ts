@@ -18,6 +18,7 @@ export interface ValidationEvidence {
   disabledElements: string[];
   formValues: Record<string, string>;
   networkResponseStatusMap: Record<string, number>;
+  responseBodies?: Record<string, string>;
 }
 
 export interface ValidatorResult {

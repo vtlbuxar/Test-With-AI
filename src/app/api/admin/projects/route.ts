@@ -47,7 +47,7 @@ export async function GET() {
         ownerEmail: proj.user?.email || '',
         createdAt: proj.createdAt,
         requirementSummary: proj.requirementText ? proj.requirementText.substring(0, 100) + (proj.requirementText.length > 100 ? '...' : '') : 'No requirements text',
-        model: proj.settings?.defaultModel || 'gemini-2.0-flash',
+        model: proj.settings?.defaultModel || 'gemini-1.5-flash',
         tokensUsed: estimatedTokens,
         estimatedCost: Number(estimatedCost.toFixed(4)),
         status: proj.suites ? 'Completed' : 'Draft'

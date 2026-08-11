@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     let modelInstance: any;
     if (provider === 'gemini') {
-      modelInstance = createGoogleGenerativeAI({ apiKey })('gemini-2.0-flash');
+      modelInstance = createGoogleGenerativeAI({ apiKey })('gemini-1.5-flash');
     } else if (provider === 'groq') {
       modelInstance = createGroq({ apiKey })('llama-3.1-8b-instant');
     } else if (provider === 'openai') {

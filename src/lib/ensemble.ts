@@ -45,8 +45,8 @@ export function parseAIConfig(headerVal: string | null, geminiKeyHeader?: string
       anthropic: { apiKey: process.env.ANTHROPIC_API_KEY || '' },
       deepseek: { apiKey: process.env.DEEPSEEK_API_KEY || '' },
     },
-    fallbackOrder: ['gemini-2.0-flash', 'openai/gpt-oss-20b'],
-    defaultModel: 'gemini-2.0-flash',
+    fallbackOrder: ['gemini-1.5-flash', 'openai/gpt-oss-20b'],
+    defaultModel: 'gemini-1.5-flash',
   };
 
   if (!headerVal) return defaultConfig;
@@ -74,7 +74,7 @@ export function parseAIConfig(headerVal: string | null, geminiKeyHeader?: string
   }
 }
 
-function getProviderNameForModel(modelId: string): string {
+export function getProviderNameForModel(modelId: string): string {
   if (modelId.startsWith('gemini-')) return 'Google AI';
   if (modelId.startsWith('claude-')) return 'Anthropic';
   if (modelId.startsWith('llama-') || modelId.includes('gpt-oss')) return 'Groq';
@@ -84,7 +84,7 @@ function getProviderNameForModel(modelId: string): string {
   return 'Unknown';
 }
 
-function getModelInstance(modelId: string, config: AIConfig): LanguageModel {
+export function getModelInstance(modelId: string, config: AIConfig): LanguageModel {
   // 1. Google Gemini
   if (modelId.startsWith('gemini-')) {
     const key = config.providers.gemini?.apiKey || process.env.GEMINI_API_KEY;

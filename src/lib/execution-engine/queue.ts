@@ -1,4 +1,6 @@
 import { EventEmitter } from 'events';
+import { AIConfig } from '../ensemble';
+
 
 export type RunControlState = 'Running' | 'Paused' | 'Cancelled' | 'Pending' | 'Completed';
 
@@ -13,6 +15,7 @@ export interface ExecutionJob {
   currentStepIndex: number;
   totalSteps: number;
   createdAt: number;
+  aiConfig?: AIConfig;
 }
 
 class QueueManager extends EventEmitter {
@@ -32,7 +35,8 @@ class QueueManager extends EventEmitter {
     projectId: string,
     testCaseIds: string[],
     websiteUrl: string,
-    browser: 'chromium' | 'firefox' | 'webkit' | 'edge'
+    browser: 'chromium' | 'firefox' | 'webkit' | 'edge',
+    aiConfig?: AIConfig
   ): ExecutionJob {
     const job: ExecutionJob = {
       runId,
@@ -45,6 +49,7 @@ class QueueManager extends EventEmitter {
       currentStepIndex: 0,
       totalSteps: 0,
       createdAt: Date.now(),
+      aiConfig,
     };
 
     this.queue.push(job);
@@ -144,8 +149,8 @@ class QueueManager extends EventEmitter {
           
           try {
             // Import executor dynamically to avoid circular references
-            const { executeTestRun } = await import('./executor');
-            await executeTestRun(nextJob);
+            const { executePlaywrightPOM } = await import('./playwright-runner');
+            await executePlaywrightPOM(nextJob);
           } catch (e: any) {
             this.addLog(nextJob.runId, `[Error] Critical worker failure: ${e.message || e}`);
             this.updateJobStatus(nextJob.runId, 'Completed');

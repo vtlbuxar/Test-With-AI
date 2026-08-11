@@ -21,9 +21,8 @@ export interface LogUsageParams {
 
 // Pricing per million tokens (input / output)
 const MODEL_PRICING: Record<string, { input: number; output: number }> = {
-  'gemini-2.0-flash': { input: 0.075, output: 0.30 },
-  'gemini-1.5-pro': { input: 1.25, output: 5.00 },
   'gemini-1.5-flash': { input: 0.075, output: 0.30 },
+  'gemini-1.5-pro': { input: 1.25, output: 5.00 },
   'claude-3-5-sonnet-latest': { input: 3.00, output: 15.00 },
   'claude-3-5-haiku-latest': { input: 0.80, output: 4.00 },
   'gpt-4o': { input: 5.00, output: 15.00 },

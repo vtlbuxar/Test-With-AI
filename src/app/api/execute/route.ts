@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { queueManager } from '@/lib/execution-engine/queue';
+import { parseAIConfig } from '@/lib/ensemble';
 import crypto from 'crypto';
+
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,13 +19,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
+    const aiConfigHeader = req.headers.get('x-ai-config');
+    const geminiKeyHeader = req.headers.get('x-gemini-api-key');
+    const aiConfig = parseAIConfig(aiConfigHeader, geminiKeyHeader);
+
     const runId = crypto.randomUUID();
     const job = queueManager.enqueue(
       runId,
       projectId,
       testCaseIds,
       websiteUrl,
-      browser || 'chromium'
+      browser || 'chromium',
+      aiConfig
     );
 
     return NextResponse.json({

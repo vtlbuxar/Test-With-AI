@@ -523,7 +523,7 @@ async function runAiValidation(
         const geminiProvider = createGoogleGenerativeAI({
           apiKey: process.env.GEMINI_API_KEY
         });
-        fallbackModelInstance = geminiProvider('gemini-2.0-flash');
+        fallbackModelInstance = geminiProvider('gemini-1.5-flash');
       }
     } else if (process.env.DEEPSEEK_API_KEY) {
       const provider = createOpenAI({
@@ -535,7 +535,7 @@ async function runAiValidation(
       const provider = createGoogleGenerativeAI({
         apiKey: process.env.GEMINI_API_KEY || ''
       });
-      modelInstance = provider('gemini-2.0-flash');
+      modelInstance = provider('gemini-1.5-flash');
     }
 
     // Build structured evidence context prompt (excluding bodyText to keep prompt tokens clean)
@@ -771,6 +771,7 @@ export async function executeTestRun(job: ExecutionJob) {
   const consoleLogs: string[] = [];
   const networkLogs: string[] = [];
   const networkResponseStatusMap: Record<string, number> = {};
+  const responseBodies: Record<string, string> = {};
 
   // Create db run entry
   let dbRun = await prisma.testRun.create({
@@ -837,9 +838,16 @@ export async function executeTestRun(job: ExecutionJob) {
       queueManager.addLog(runId, err);
     });
 
-    page.on('response', res => {
+    page.on('response', async res => {
       const key = `${res.request().method()} ${res.url()}`;
       networkResponseStatusMap[key] = res.status();
+      try {
+        const contentType = res.headers()['content-type'] || '';
+        if (contentType.includes('application/json')) {
+          const body = await res.text();
+          if (body) responseBodies[key] = body;
+        }
+      } catch (e) {}
       if (res.status() >= 400) {
         const err = `[HTTP Error ${res.status()}] ${res.request().method()} ${res.url()}`;
         networkLogs.push(err);
@@ -960,7 +968,7 @@ export async function executeTestRun(job: ExecutionJob) {
             }
 
             // 1. Gather page evidence
-            const evidence = await collectEvidence(page, consoleLogs, networkLogs, networkResponseStatusMap);
+            const evidence = await collectEvidence(page, consoleLogs, networkLogs, networkResponseStatusMap, responseBodies);
 
             const isLastStep = (idx === rawSteps.length - 1);
             stepExpectedResult = isLastStep ? expected : `The step action "${stepText}" completes successfully without error.`;
